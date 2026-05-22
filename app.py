@@ -53,7 +53,9 @@ else:
               ("D" if st.session_state.view >= 1 else "B")
     
     res = results[res_key]
-    st.snow()
+    # 결과 화면 상단에 축하 짤 넣기
+    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjEx.../giphy.gif")
+    st.balloons() # 풍선은 거들 뿐!
     st.header(f"당신은 {res['animal']}")
     st.subheader(res['title'])
     st.write(res['desc'])
