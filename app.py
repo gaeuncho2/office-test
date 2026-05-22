@@ -53,7 +53,7 @@ else:
               ("D" if st.session_state.view >= 1 else "B")
     
     res = results[res_key]
-    st.balloons()
+    st.snow()
     st.header(f"당신은 {res['animal']}")
     st.subheader(res['title'])
     st.write(res['desc'])
