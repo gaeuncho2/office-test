@@ -1,63 +1,63 @@
 import streamlit as st
 
-# 페이지 설정
-st.set_page_config(page_title="사바나 오피스 테스트", page_icon="🦁")
+st.set_page_config(page_title="사바나 오피스 8가지 유형", page_icon="🐾")
 
-# 세션 상태 초기화
-if 'speed_score' not in st.session_state:
-    st.session_state.speed_score = 0
-if 'temp_score' not in st.session_state:
-    st.session_state.temp_score = 0
-if 'page' not in st.session_state:
-    st.session_state.page = 0
+# 세션 상태 초기화 (3개의 점수 축)
+if 'speed' not in st.session_state: st.session_state.speed = 0  # 추진력 vs 신중함
+if 'temp' not in st.session_state: st.session_state.temp = 0    # 이성 vs 감성
+if 'view' not in st.session_state: st.session_state.view = 0    # 디테일 vs 큰그림
+if 'page' not in st.session_state: st.session_state.page = 0
 
-# 질문 데이터
+# 질문지 (각 축당 2문제씩 총 6문제)
 questions = [
-    {"q": "Q1. 출근 직후 나는?", "a": "바로 일 시작!", "b": "커피부터 한 잔...", "type": "speed"},
-    {"q": "Q2. 회의 중 황당한 의견을 들으면?", "a": "팩트 폭격", "b": "일단 리액션", "type": "temp"},
-    {"q": "Q3. 갑작스러운 급한 업무 요청엔?", "a": "폭풍 작업", "b": "차근차근 계획", "type": "speed"},
-    {"q": "Q4. 동료가 실수해서 우울해하면?", "a": "해결책 제시", "b": "따뜻한 위로", "type": "temp"}
+    {"q": "새로운 프로젝트가 내려왔을 때 나는?", "a": "일단 바로 실행에 옮긴다", "b": "전체적으로 검토 후 천천히 시작한다", "type": "speed"},
+    {"q": "팀원의 실수로 보고서가 엉망이 되었다면?", "a": "잘못된 부분을 조목조목 짚어준다", "b": "팀원의 마음을 먼저 다독여준다", "type": "temp"},
+    {"q": "업무를 처리할 때 더 중요하게 생각하는 것은?", "a": "숫자 하나, 오타 하나까지 완벽한 디테일", "b": "전체적인 흐름과 최종 목적(큰 그림)", "type": "view"},
+    {"q": "점심 메뉴를 정할 때 나는?", "a": "가장 먼저 메뉴를 제안한다", "b": "다들 결정할 때까지 기다렸다가 따른다", "type": "speed"},
+    {"q": "동료가 업무 고민을 털어놓는다면?", "a": "현실적인 대안을 찾아준다", "b": "충분히 들어주며 공감해준다", "type": "temp"},
+    {"q": "기획안을 작성할 때 나의 스타일은?", "a": "각 항목의 세부 실행 방안에 집중한다", "b": "이 사업의 비전과 방향성에 집중한다", "type": "view"}
 ]
 
-# 결과 데이터
+# 8가지 결과 데이터
 results = {
-    "TT": {"animal": "치타", "desc": "성과에 미친 효율 끝판왕! 결론 없는 회의를 가장 싫어해요."},
-    "TF": {"animal": "부엉이", "desc": "차분한 팩트 체크기! 데이터와 근거 없이는 움직이지 않아요."},
-    "FT": {"animal": "골든 리트리버", "desc": "우리 팀 에너자이저! 추진력도 좋은데 성격까지 밝은 타입."},
-    "FF": {"animal": "코알라", "desc": "오피스의 평화주의자! 남의 부탁을 잘 거절 못하는 따뜻한 분이군요."}
+    "STD": {"animal": "독수리 🦅", "title": "완벽주의 리더", "desc": "빠르고 정확합니다. 빈틈없는 일 처리로 신뢰를 얻어요."},
+    "STB": {"animal": "사자 🦁", "title": "결단력 있는 보스", "desc": "시원시원하게 일을 밀어붙이며 큰 성과를 만들어냅니다."},
+    "SFD": {"animal": "돌고래 🐬", "title": "다정한 해결사", "desc": "팀의 활력소이자 문제가 생기면 발 벗고 나서는 타입입니다."},
+    "SFB": {"animal": "강아지 🐶", "title": "핵인싸 메이커", "desc": "친화력 갑! 긍정적인 에너지로 팀 분위기를 주도합니다."},
+    "FTD": {"animal": "거미 🕷️", "title": "치밀한 전략가", "desc": "조용하지만 뒤에서 모든 상황을 파악하고 분석합니다."},
+    "FTB": {"animal": "코끼리 🐘", "title": "묵직한 중심점", "desc": "신중하고 이성적이며, 어떤 상황에서도 흔들리지 않습니다."},
+    "FFD": {"animal": "다람쥐 🐿️", "title": "섬세한 서포터", "desc": "보이지 않는 곳에서 팀원들을 세심하게 챙기고 돕습니다."},
+    "FFB": {"animal": "나무늘보 🦥", "title": "평화로운 공상가", "desc": "여유로운 마음으로 창의적인 아이디어를 제안합니다."}
 }
 
-# UI 구현
-st.title("🦁 사바나 오피스 생존 테스트")
-st.write("나의 직장 생활 동물 유형은?")
+st.title("🐾 사바나 오피스 생존 테스트")
 
 if st.session_state.page < len(questions):
     item = questions[st.session_state.page]
-    st.progress((st.session_state.page) / len(questions))
-    st.subheader(item['q'])
+    st.write(f"### {item['q']}")
     
-    if st.button(item['a'], key="a"):
-        if item['type'] == 'speed': st.session_state.speed_score += 1
-        else: st.session_state.temp_score += 1
+    if st.button(item['a'], key=f"a{st.session_state.page}"):
+        if item['type'] == 'speed': st.session_state.speed += 1
+        elif item['type'] == 'temp': st.session_state.temp += 1
+        else: st.session_state.view += 1
         st.session_state.page += 1
         st.rerun()
         
-    if st.button(item['b'], key="b"):
-        # B 선택 시 점수 추가 없음 (이진 분류)
+    if st.button(item['b'], key=f"b{st.session_state.page}"):
         st.session_state.page += 1
         st.rerun()
 else:
-    # 결과 도출
-    res_speed = "T" if st.session_state.speed_score >= 1 else "F"
-    res_temp = "T" if st.session_state.temp_score >= 1 else "F"
-    res_key = res_speed + res_temp
+    # 8가지 조합 계산 (2개 중 1개 이상이면 앞 글자 선택)
+    res_key = ("S" if st.session_state.speed >= 1 else "F") + \
+              ("T" if st.session_state.temp >= 1 else "F") + \
+              ("D" if st.session_state.view >= 1 else "B")
     
+    res = results[res_key]
     st.balloons()
-    st.header(f"당신은 '{results[res_key]['animal']}' 유형!")
-    st.write(results[res_key]['desc'])
+    st.header(f"당신은 {res['animal']}")
+    st.subheader(res['title'])
+    st.write(res['desc'])
     
     if st.button("다시 하기"):
-        st.session_state.page = 0
-        st.session_state.speed_score = 0
-        st.session_state.temp_score = 0
+        st.session_state.clear()
         st.rerun()
