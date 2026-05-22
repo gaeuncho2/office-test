@@ -1,45 +1,44 @@
 import streamlit as st
 
-st.set_page_config(page_title="사바나 오피스 8가지 유형", page_icon="🐾")
+# 페이지 스타일링
+st.set_page_config(page_title="오피스 사바나 테스트", page_icon="🐾")
 
-# 세션 상태 초기화 (3개의 점수 축)
-if 'speed' not in st.session_state: st.session_state.speed = 0  # 추진력 vs 신중함
-if 'temp' not in st.session_state: st.session_state.temp = 0    # 이성 vs 감성
-if 'view' not in st.session_state: st.session_state.view = 0    # 디테일 vs 큰그림
-if 'page' not in st.session_state: st.session_state.page = 0
+# 세션 상태 관리
+if 'scores' not in st.session_state:
+    st.session_state.scores = {'speed': 0, 'temp': 0, 'view': 0}
+if 'page' not in st.session_state:
+    st.session_state.page = 0
 
-# 질문지 (각 축당 2문제씩 총 6문제)
+# 질문지 데이터
 questions = [
-    {"q": "새로운 프로젝트가 내려왔을 때 나는?", "a": "일단 바로 실행에 옮긴다", "b": "전체적으로 검토 후 천천히 시작한다", "type": "speed"},
-    {"q": "팀원의 실수로 보고서가 엉망이 되었다면?", "a": "잘못된 부분을 조목조목 짚어준다", "b": "팀원의 마음을 먼저 다독여준다", "type": "temp"},
-    {"q": "업무를 처리할 때 더 중요하게 생각하는 것은?", "a": "숫자 하나, 오타 하나까지 완벽한 디테일", "b": "전체적인 흐름과 최종 목적(큰 그림)", "type": "view"},
-    {"q": "점심 메뉴를 정할 때 나는?", "a": "가장 먼저 메뉴를 제안한다", "b": "다들 결정할 때까지 기다렸다가 따른다", "type": "speed"},
-    {"q": "동료가 업무 고민을 털어놓는다면?", "a": "현실적인 대안을 찾아준다", "b": "충분히 들어주며 공감해준다", "type": "temp"},
-    {"q": "기획안을 작성할 때 나의 스타일은?", "a": "각 항목의 세부 실행 방안에 집중한다", "b": "이 사업의 비전과 방향성에 집중한다", "type": "view"}
+    {"q": "급한 업무가 쏟아질 때 나의 스타일은?", "a": "폭풍 같은 속도로 일단 쳐낸다", "b": "차분하게 우선순위를 분석한다", "type": "speed"},
+    {"q": "팀원의 실수를 발견했을 때 나는?", "a": "냉철하게 원인을 파악하고 피드백한다", "b": "상대가 민망하지 않게 조심스레 말한다", "type": "temp"},
+    {"q": "내가 더 자신 있는 업무 분야는?", "a": "꼼꼼한 서류 작업과 데이터 검증", "b": "창의적인 아이디어와 기획안 구상", "type": "view"},
+    {"q": "회의가 길어질 때 드는 생각은?", "a": "빨리 결정하고 가서 일하고 싶다", "b": "조금 더 다각도로 논의해보고 싶다", "type": "speed"},
+    {"q": "동료가 고민 상담을 요청한다면?", "a": "현실적인 해결책을 제시해준다", "b": "충분히 공감하고 위로해준다", "type": "temp"},
+    {"q": "보고서를 작성할 때 나의 강점은?", "a": "빈틈없는 상세 실행 계획", "b": "설득력 있는 전체 비전 제시", "type": "view"}
 ]
 
-# 8가지 결과 데이터
+# 결과 데이터 상세화
 results = {
-    "STD": {"animal": "독수리 🦅", "title": "완벽주의 리더", "desc": "빠르고 정확합니다. 빈틈없는 일 처리로 신뢰를 얻어요."},
-    "STB": {"animal": "사자 🦁", "title": "결단력 있는 보스", "desc": "시원시원하게 일을 밀어붙이며 큰 성과를 만들어냅니다."},
-    "SFD": {"animal": "돌고래 🐬", "title": "다정한 해결사", "desc": "팀의 활력소이자 문제가 생기면 발 벗고 나서는 타입입니다."},
-    "SFB": {"animal": "강아지 🐶", "title": "핵인싸 메이커", "desc": "친화력 갑! 긍정적인 에너지로 팀 분위기를 주도합니다."},
-    "FTD": {"animal": "거미 🕷️", "title": "치밀한 전략가", "desc": "조용하지만 뒤에서 모든 상황을 파악하고 분석합니다."},
-    "FTB": {"animal": "코끼리 🐘", "title": "묵직한 중심점", "desc": "신중하고 이성적이며, 어떤 상황에서도 흔들리지 않습니다."},
-    "FFD": {"animal": "다람쥐 🐿️", "title": "섬세한 서포터", "desc": "보이지 않는 곳에서 팀원들을 세심하게 챙기고 돕습니다."},
-    "FFB": {"animal": "나무늘보 🦥", "title": "평화로운 공상가", "desc": "여유로운 마음으로 창의적인 아이디어를 제안합니다."}
+    "STD": {"animal": "매 🦅", "nick": "냉철한 조준 사수", "good": "빠른 실행력, 완벽한 디테일", "bad": "가끔은 주변을 기다려주세요", "match": "평화로운 코끼리 🐘"},
+    "STB": {"animal": "사자 🦁", "nick": "정글의 통치자", "good": "결단력 있는 리더십, 시원한 추진력", "bad": "디테일을 챙겨줄 파트너가 필요해요", "match": "섬세한 다람쥐 🐿️"},
+    "SFD": {"animal": "보더콜리 🐕", "nick": "만능 해결사", "good": "높은 효율과 동료를 챙기는 따뜻함", "bad": "혼자 너무 많은 짐을 지려 해요", "match": "조용한 미어캣 🦦"},
+    "SFB": {"animal": "돌고래 🐬", "nick": "긍정 시너지 메이커", "good": "분위기 메이커, 열정적인 소통", "bad": "가끔은 집중의 시간이 필요해요", "match": "북극곰 🐻‍❄️"},
+    "FTD": {"animal": "미어캣 🦦", "nick": "오피스 파수꾼", "good": "엄청난 정보력, 리스크 파악 능력", "bad": "결정이 조금 늦어질 수 있어요", "match": "만능 보더콜리 🐕"},
+    "FTB": {"animal": "북극곰 🐻‍❄️", "nick": "묵직한 중재자", "good": "신중한 판단, 갈등 없는 협업", "bad": "표현을 조금 더 과감하게 해보세요", "match": "해맑은 돌고래 🐬"},
+    "FFD": {"animal": "다람쥐 🐿️", "nick": "섬세한 서포터", "good": "꼼꼼한 뒷정리, 동료들의 수호천사", "bad": "거절을 어려워하는 게 고민!", "match": "결단력 사자 🦁"},
+    "FFB": {"animal": "코끼리 🐘", "nick": "마음 넓은 전략가", "good": "비전 제시, 든든한 멘토 스타일", "bad": "실무의 디테일을 놓치지 마세요", "match": "냉철한 매 🦅"}
 }
 
-st.title("🐾 사바나 오피스 생존 테스트")
+st.title("🐾 오피스 사바나 생존 테스트")
 
 if st.session_state.page < len(questions):
     item = questions[st.session_state.page]
     st.write(f"### {item['q']}")
     
     if st.button(item['a'], key=f"a{st.session_state.page}"):
-        if item['type'] == 'speed': st.session_state.speed += 1
-        elif item['type'] == 'temp': st.session_state.temp += 1
-        else: st.session_state.view += 1
+        st.session_state.scores[item['type']] += 1
         st.session_state.page += 1
         st.rerun()
         
@@ -47,18 +46,22 @@ if st.session_state.page < len(questions):
         st.session_state.page += 1
         st.rerun()
 else:
-    # 8가지 조합 계산 (2개 중 1개 이상이면 앞 글자 선택)
-    res_key = ("S" if st.session_state.speed >= 1 else "F") + \
-              ("T" if st.session_state.temp >= 1 else "F") + \
-              ("D" if st.session_state.view >= 1 else "B")
+    res_key = ("S" if st.session_state.scores['speed'] >= 1 else "F") + \
+              ("T" if st.session_state.scores['temp'] >= 1 else "F") + \
+              ("D" if st.session_state.scores['view'] >= 1 else "B")
     
     res = results[res_key]
-    # 결과 화면 상단에 축하 짤 넣기
-    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjEx.../giphy.gif")
-    st.balloons() # 풍선은 거들 뿐!
-    st.header(f"당신은 {res['animal']}")
-    st.subheader(res['title'])
-    st.write(res['desc'])
+    st.balloons()
+    st.success("🎉 분석 완료!")
+    st.header(f"당신은 {res['animal']} [{res['nick']}]")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.info(f"**💪 장점**\n\n{res['good']}")
+    with col2:
+        st.warning(f"**⚠️ 보완점**\n\n{res['bad']}")
+        
+    st.subheader(f"🤝 환상의 짝꿍: {res['match']}")
     
     if st.button("다시 하기"):
         st.session_state.clear()
