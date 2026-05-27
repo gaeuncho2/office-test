@@ -151,4 +151,70 @@ if 'scores' not in st.session_state:
 
 # 5. 헤더 섹션
 st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px; margin-bottom: 0;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-weight: 800; margin-top: 10px; margin-bottom: 40px;'>내 서비스 자가진단하기 📝</h1>", unsafe_allow_html=True
+st.markdown("<h1 style='text-align: center; font-weight: 800; margin-top: 10px; margin-bottom: 40px;'>내 서비스 자가진단하기 📝</h1>", unsafe_allow_html=True)
+
+# 6. 메인 로직
+if st.session_state.step < len(diagnostics):
+    total_q = len(diagnostics)
+    current_q_idx = st.session_state.step
+    progress_val = current_q_idx / total_q
+    st.progress(progress_val)
+    st.write(f"<p style='text-align: right; color: #64748B;'>{current_q_idx + 1} / {total_q}</p>", unsafe_allow_html=True)
+
+    q_text = diagnostics[current_q_idx]['q']
+    st.markdown(f"""
+        <div class="main-card">
+            <p class="question-text">{q_text}</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("네, 준수합니다", key=f"yes_{current_q_idx}"):
+            st.session_state.scores[diagnostics[current_q_idx]['type']] += 1
+            st.session_state.step += 1
+            st.rerun()
+    with col2:
+        if st.button("아니요, 부족합니다", key=f"no_{current_q_idx}"):
+            st.session_state.step += 1
+            st.rerun()
+
+else:
+    s = st.session_state.scores
+    
+    def get_persona(s):
+        total = sum(s.values())
+        if total >= 11: return "스마트 가이드 돌고래", "모두에게 친절한 지능형 서비스", "최고의 접근성입니다! 전문가의 디테일 한 스푼만 더하면 완벽합니다."
+        if s['V'] <= 1: return "눈 가린 코끼리", "시각적 장벽이 높은 거대 서비스", "시각 요소 개선이 시급합니다. 고령층 이탈률이 매우 높을 것으로 보입니다."
+        if s['C'] <= 1: return "잠자는 거북이", "조작이 답답한 미로형 서비스", "사용자 동선 재설계가 필요합니다. 터치 및 키보드 조작성을 높여주세요."
+        if s['F'] <= 1: return "까칠한 고슴도치", "피드백이 불친절한 예민한 서비스", "오류 안내와 상태 피드백을 강화하여 사용자 심리적 불안을 해소하세요."
+        return "과묵한 진돗개", "기본은 하지만 센스가 부족한 서비스", "기능은 작동하지만, 사용자 배려를 위한 UX 디테일 보완이 권장됩니다."
+
+    p_name, p_sub, p_desc = get_persona(s)
+
+    st.markdown(f"""
+        <div class="main-card">
+            <p class="persona-title">{p_name}</p>
+            <h3>{p_sub}</h3>
+            <p style="font-size: 18px; color: #475569;">{p_desc}</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.subheader("📊 영역별 상세 지표")
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("시각 배려", f"{s['V']}/3")
+    col2.metric("조작 편의", f"{s['C']}/3")
+    col3.metric("반응/알림", f"{s['F']}/3")
+    col4.metric("보편 설계", f"{s['I']}/3")
+    
+    st.write("---")
+    
+    res_col1, res_col2 = st.columns(2)
+    with res_col1:
+        if st.button("전문 컨설팅 문의하기", key="final_contact"):
+            st.success("📩 요청이 접수되었습니다! 곧 연락드릴게요.")
+    with res_col2:
+        if st.button("다시 테스트하기", key="final_restart"):
+            st.session_state.step = 0
+            st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
+            st.rerun()
