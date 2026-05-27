@@ -83,7 +83,7 @@ st.markdown("""
     div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
         display: flex !important; justify-content: space-between !important; width: 100% !important;
     }
-@media (max-width: 640px) {
+    @media (max-width: 640px) {
         /* 카드의 패딩을 줄여 공간 확보 */
         .main-card { padding: 25px 15px; }
         .question-text { font-size: 20px !important; }
@@ -103,7 +103,7 @@ st.markdown("""
             max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
             height: 60px;
             font-size: 17px !important;
-            margin-bottom:10px;
+            margin-bottom:30px;
         }
     }
     </style>
@@ -115,7 +115,7 @@ if 'scores' not in st.session_state: st.session_state.scores = {'V': 0, 'C': 0, 
 
 # 5. 헤더
 st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-weight: 800;'>내 서비스 자가진단하기 📝</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-weight: 800;'>내 서비스<br> 자가진단하기 📝</h1>", unsafe_allow_html=True)
 
 #6. 메인 로직
 if st.session_state.step < len(diagnostics):
