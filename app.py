@@ -19,48 +19,65 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. 핵심 CSS 수정 (가로 꽉 참 & 모바일 정렬 유지)
+# 3. CSS 주입 (모바일 화면 밖으로 나가는 현상 완전 해결 버전)
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    * { font-family: 'Pretendard', sans-serif !important; }
-    html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; overflow-x: hidden; }
+    * { font-family: 'Pretendard', sans-serif !important; box-sizing: border-box; }
+    
+    /* 전체 컨테이너 여백 제거 및 가로 스크롤 방지 */
+    html, body, [data-testid="stAppViewContainer"] { 
+        background-color: #FFFEF5 !important; 
+        overflow-x: hidden !important; 
+    }
+    
+    /* Streamlit 내부 기본 패딩 줄이기 (가장 중요) */
+    [data-testid="stMainBlockContainer"] {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        max-width: 100% !important;
+    }
+
     #MainMenu, footer, header { visibility: hidden; }
 
-    /* 메인 카드 */
+    /* 메인 카드 스타일 */
     .main-card {
-        background: white; padding: 40px 20px; border-radius: 40px;
-        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 30px;
+        background: white; padding: 30px 15px; border-radius: 30px;
+        box-shadow: 0 10px 25px rgba(253, 224, 71, 0.1); margin-bottom: 25px;
         border: 1px solid #ddd; text-align: center;
+        width: 100%;
     }
-    .question-text { font-size: 22px; font-weight: 800; color: #334155; line-height: 1.5; word-break: keep-all; }
+    .question-text { font-size: 20px; font-weight: 800; color: #334155; line-height: 1.4; word-break: keep-all; }
 
-    /* ★ 가로 정렬 & 꽉 차게 만드는 핵심 로직 ★ */
+    /* ★ 컬럼 정렬 및 버튼 짤림 방지 핵심 ★ */
     div[data-testid="stHorizontalBlock"] {
         display: flex !important;
-        flex-direction: row !important; /* 모바일에서도 무조건 가로 */
-        flex-wrap: nowrap !important;
-        gap: 10px !important; /* 버튼 사이 간격 */
+        flex-direction: row !important; /* 모바일 가로 유지 */
+        flex-wrap: nowrap !important; /* 절대 줄바꿈 금지 */
+        justify-content: space-between !important;
+        gap: 8px !important; /* 버튼 사이 간격 축소 */
         width: 100% !important;
     }
 
     div[data-testid="column"] {
-        flex: 1 1 50% !important; /* 각 컬럼이 정확히 절반 차지 */
-        min-width: 0 !important;
+        flex: 1 1 0% !important; /* 정확히 동일한 비율로 나눔 */
+        min-width: 0 !important; /* 내부 콘텐츠가 컬럼을 키우지 못하게 차단 */
+        width: 100% !important;
     }
 
-    /* 버튼 스타일 */
+    /* 버튼 기본 스타일 */
     div.stButton > button {
-        width: 100% !important; /* 컬럼 너비에 꽉 차게 */
-        height: 65px;
-        border-radius: 50px;
+        width: 100% !important; /* 컬럼 안에서 꽉 참 */
+        height: 60px;
+        border-radius: 15px; /* 모바일은 조금 더 각진게 안정적 */
         border: none;
         background-color: #eee;
         color: #333;
-        font-size: 16px;
+        font-size: 15px; /* 텍스트 크기 최적화 */
         font-weight: 700;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 0 5px !important; /* 내부 여백 최소화 */
+        white-space: nowrap; /* 글자가 버튼 밖으로 나가지 않게 */
     }
 
     div.stButton > button:hover {
@@ -68,13 +85,12 @@ st.markdown("""
         color: #fff;
     }
 
-    /* 모바일 전용 미세 조정 (390px 근처) */
-    @media (max-width: 768px) {
-        .main-card { padding: 30px 15px !important; }
+    /* 모바일 미세 조정 (390px 이하) */
+    @media (max-width: 430px) {
         .question-text { font-size: 18px !important; }
         div.stButton > button {
-            height: 60px !important;
-            font-size: 14px !important;
+            height: 55px !important;
+            font-size: 13px !important;
         }
     }
     </style>
@@ -96,9 +112,11 @@ if st.session_state.step < len(diagnostics):
 
     st.markdown(f'<div class="main-card"><p class="question-text">{diagnostics[curr]["q"]}</p></div>', unsafe_allow_html=True)
 
-    # st.columns에 gap을 주어 버튼 사이 여백 조절
+    # 6. 메인 로직 내 버튼 부분
     col1, col2 = st.columns(2)
     with col1:
+        # use_container_width=True는 제거하거나 CSS로 덮어씌웁니다. 
+        # CSS가 우선순위가 높으므로 아래와 같이 유지해도 됩니다.
         if st.button("네, 준수합니다", key=f"y_{curr}"):
             st.session_state.scores[diagnostics[curr]['type']] += 1
             st.session_state.step += 1
