@@ -95,7 +95,7 @@ st.markdown("""
 
     /* 2. 컬럼 박스: 너비를 50%로 제한 (핵심) */
     div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-        width: 45% !important; /* 100%에서 48%로 수정 (가로 배치의 핵심) */
+        width: 50% !important; /* 100%에서 48%로 수정 (가로 배치의 핵심) */
         flex: 1 1 0% !important;
         display: flex !important;
     }
