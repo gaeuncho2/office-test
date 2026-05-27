@@ -97,9 +97,13 @@ st.markdown("""
         div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
             width: 100% !important; /* 버튼 감싸는 박스 너비 100% */
         }
-
-        div.stButton > button {
+    
+        div.stButton {
             display:flex;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        div.stButton > button {
             width:250px;
             max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
             height: 60px;
