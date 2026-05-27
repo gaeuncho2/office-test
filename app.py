@@ -111,37 +111,51 @@ st.markdown("""
     }
 
     /* ★ 모바일 반응형 핵심 수정 ★ */
+    /* ★ 모바일 반응형 가로 꽉 찬 배치 ★ */
     @media (max-width: 768px) {
+        /* 질문 텍스트 크기 최적화 */
         .question-text {
-            font-size: 18px !important; /* 모바일에서는 폰트 크기 대폭 축소 */
+            font-size: 24px !important; 
             line-height: 1.3 !important;
+            word-break: keep-all;
         }
         
         .main-card {
             padding: 30px 15px !important;
-            border-radius: 25px !important;
+            margin-bottom: 20px !important;
         }
 
-        /* 모바일에서 버튼 세로 정렬 */
+        /* 1. 버튼 컨테이너를 가로로 배치하고 중앙 정렬 */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            flex-direction: column !important;
-        }
-
-        div.stButton > button {
-            width: 100% !important; /* 버튼 너비 가득 채우기 */
-            max-width: 300px;
-            margin: 5px 5px !important;
-            display:flex;
+            display: flex !important;
+            flex-direction: row !important; /* 가로 유지 */
             justify-content: center !important;
             align-items: center !important;
+            gap: 10px !important; /* 버튼 사이 간격 */
+            width: 100% !important;
         }
 
-        /* 결과창 Metric 2열 배치 */
+        /* 2. 각 버튼 컬럼이 가로 폭의 절반을 차지하도록 설정 */
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
+            flex: 1 !important; /* 남은 공간을 똑같이 나눠가짐 */
+            min-width: 0 !important; /* 좁은 화면 대응 */
+        }
+
+        /* 3. 버튼 스타일: 가로 길이를 100%로 지정 */
+        div.stButton > button {
+            width: 100% !important; /* 컬럼 너비에 꽉 맞춤 */
+            max-width: none !important; /* 고정 크기 해제 */
+            height: 60px !important;
+            font-size: 16px !important; /* 글자 크기 최적화 */
+            margin: 0 !important;
+            padding: 0 5px !important;
+            white-space: nowrap !important; /* 글자 줄바꿈 방지 */
+        }
+
+        /* 결과창 Metric 2열 배치 유지 */
         div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
             min-width: 45% !important;
         }
-        
-        h1 { font-size: 29px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
