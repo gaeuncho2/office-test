@@ -50,7 +50,7 @@ st.markdown("""
         font-size: 46px;
         font-weight: 800;
         color: #334155;
-        line-height: 1.2;
+        line-height: 1.5;
     }
 
     /* 1. 버튼이 포함된 컬럼만 골라내어 중앙 정렬 (결과창 Metric은 건드리지 않음) */
