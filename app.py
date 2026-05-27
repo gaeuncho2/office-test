@@ -20,11 +20,11 @@ diagnostics = [
 ]
 
 # 3. 아기자기한 에이전시 스타일 CSS 주입 (반응형 보완)
+# 3. 아기자기한 에이전시 스타일 CSS 주입
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     
-    /* 전체 공통 설정 */
     * {font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;}
     
     html, body, [data-testid="stAppViewContainer"] {
@@ -34,7 +34,6 @@ st.markdown("""
 
     #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
 
-    /* 메인 카드 컨테이너 */
     .main-card {
         background: white;
         padding: 40px 30px;
@@ -45,7 +44,6 @@ st.markdown("""
         text-align: center;
     }
 
-    /* 질문 텍스트 스타일 (PC 기준) */
     .question-text {
         font-size: 34px;
         font-weight: 800;
@@ -54,20 +52,19 @@ st.markdown("""
         word-break: keep-all;
     }
 
-    /* 버튼 레이아웃 정렬 (PC) */
+    /* [데스크탑] 버튼 레이아웃 */
     div[data-testid="stHorizontalBlock"]:has(div.stButton) {
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
-        gap: 0px !important;
+        gap: 10px !important;
     }
 
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
+    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
         flex: none !important;
         width: auto !important;
     }
 
-    /* 버튼 기본 스타일 */
     div.stButton > button {
         width: 250px !important;
         height: 65px;
@@ -78,99 +75,63 @@ st.markdown("""
         font-size: 18px !important;
         font-weight: 700 !important;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin: 10px !important;
     }
 
-    div.stButton > button:hover, div.stButton > button:focus {
+    div.stButton > button:hover {
         background-color: #475569 !important;
         color: #fff !important;
-        font-weight: 900 !important;
         text-decoration: underline;
         transform: scale(1.05);
     }
 
-    /* Metric 결과창 방어 */
-    div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
-        display: flex !important;
-        justify-content: space-between !important;
-        width: 100% !important;
-    }
-
-    .stProgress > div > div > div > div {
-        background-color: #4ADE80;
-        border: 1px solid #555555;
-    }
-    
-    .persona-title {
-        font-size: 36px;
-        font-weight: 900;
-        background: linear-gradient(to right, #EAB308, #22C55E);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 10px;
-    }
-
-  /* ★ 모바일 레이아웃 강제 교정 (최종) ★ */
+    /* ★ 모바일 반응형 최종 보정 ★ */
     @media (max-width: 768px) {
-        /* 1. 질문 텍스트 및 카드 최적화 */
-        .question-text {
-            font-size: 24px !important; 
-            line-height: 1.4 !important;
-            word-break: keep-all;
-        }
-        .main-card { padding: 30px 15px !important; }
-
-        /* 2. 버튼 가로 정렬 강제 (기존 그리드 무력화) */
+        .question-text { font-size: 22px !important; }
+        
+        /* 1. 버튼 가로 2열 배치 강제 */
+        /* 스트림릿의 모바일 전용 미디어쿼리를 무력화하기 위해 모든 부모 flex 설정을 덮어씁니다. */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+            flex-direction: row !important; 
+            flex-wrap: nowrap !important;
             display: flex !important;
-            flex-direction: row !important; /* 가로 유지 */
-            flex-wrap: nowrap !important; /* 절대 줄바꿈 금지 */
-            justify-content: center !important;
             width: 100% !important;
-            gap: 10px !important;
         }
 
-        /* 버튼을 감싸는 각 컬럼 요소 강제 확장 */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
-            width: 50% !important; /* 정확히 절반 */
+            width: 48% !important; /* 가로 길이를 강제로 반토막 */
             flex: 1 1 0% !important;
             min-width: 0 !important;
         }
 
         div.stButton > button {
-            width: 100% !important; /* 부모 너비 꽉 채우기 */
+            width: 100% !important; /* 줄어든 부모 너비에 꽉 맞춤 */
             height: 60px !important;
-            font-size: 15px !important;
-            padding: 0 !important;
+            font-size: 14px !important; /* 글자 잘림 방지 */
             margin: 0 !important;
         }
 
-        /* 3. 결과창 지표(Metric) 2x2 그리드 강제 */
+        /* 2. 결과창 지표(Metric) 2x2 배치 강제 */
         div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
             display: flex !important;
             flex-direction: row !important;
-            flex-wrap: wrap !important; /* 2개씩 끊기 위해 줄바꿈 허용 */
-            justify-content: space-between !important;
-            width: 100% !important;
+            flex-wrap: wrap !important; /* 2개 쓰고 줄바꿈 */
             gap: 10px !important;
         }
 
-        /* Metric 각 컬럼을 50% 미만으로 설정하여 한 줄에 2개씩 오도록 유도 */
         div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div[data-testid="column"] {
-            width: calc(50% - 10px) !important;
+            width: calc(50% - 10px) !important; /* 50%씩 차지하게 하여 2x2 구현 */
             flex: 1 1 calc(50% - 10px) !important;
-            min-width: 140px !important;
-            background: #ffffff !important;
+            min-width: 120px !important;
+            background: #fff !important;
             border-radius: 15px !important;
             border: 1px solid #eee !important;
-            padding: 10px 0 !important;
+            padding: 10px 5px !important;
         }
-
-        /* Metric 내부 레이아웃 중앙 정렬 */
-        [data-testid="stMetricSimple"] {
-            display: flex !important;
-            flex-direction: column !important;
+        
+        /* Metric 내부 정렬 */
+        div[data-testid="stMetricSimple"] {
             align-items: center !important;
+            text-align: center !important;
         }
     }
     </style>
