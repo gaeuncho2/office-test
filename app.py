@@ -77,8 +77,9 @@ st.markdown("""
     /* 버튼 호버 스타일 */
     div.stButton > button:hover {
         background-color: #475569; /* 밝은 노랑 */
-        color: #000000; /* 검정 글자 (명도대비 극대화) */
-        font-weight:bold;
+        color: #fff;
+        font-weight:900;
+        text-decoration: white wavy underline;
         transform: scale(1.05); /* 살짝 커지는 효과 */
         box-shadow: 0 10px 20px rgba(74, 222, 128, 0.2);
     }
@@ -86,7 +87,7 @@ st.markdown("""
     /* 프로그래스 바 (연두색) */
     .stProgress > div > div > div > div {
         background-color: #4ADE80;
-        border:1px solid #aaa;
+        border:1px solid #555555;
     }
     
     /* 결과 제목 (노랑/연두 포인트) */
