@@ -93,7 +93,7 @@ st.markdown("""
             align-items: center !important;
         }
         div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-            width: 100% !important; /* 버튼 감싸는 박스 너비 100% */
+            width: 45% !important; /* 버튼 감싸는 박스 너비 100% */
             display:flex;
             justify-content: stretch !important;
             align-items: center !important;
