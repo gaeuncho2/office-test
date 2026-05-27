@@ -32,11 +32,11 @@ st.markdown("""
     }
     .question-text { font-size: 28px; font-weight: 700; color: #0F172A; line-height: 1.5; margin-bottom: 10px; }
     div.stButton > button {
-        width: 100%; height: 70px; border-radius: 20px; border: 1px solid #E2E8F0;
-        background-color: white; color: #475569; font-size: 20px; font-weight: 600; transition: all 0.3s ease;
+        width: 100%; height: 70px; border-radius: 20px; border: 1px dashed #E2E8F0;
+        background-color: white; color: #bbbbbb; font-size: 25px; font-weight: 600; transition: all 0.3s ease;
     }
     div.stButton > button:hover {
-        border-color: #10B981; color: #10B981; background-color: #F0FDF4;
+        border-color: #10B981; color: #10B981; text-decoration: black wavy underline; background-color: #F0FDF4;
         transform: translateY(-3px); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.1);
     }
     .stProgress > div > div > div > div { background-color: #10B981; }
