@@ -20,27 +20,90 @@ diagnostics = [
 ]
 
 # 3. 에이전시 스타일 CSS 주입
+# 3. 아기자기한 에이전시 스타일 CSS 주입
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    html, body, [class*="css"] { font-family: 'Pretendard', sans-serif; background-color: #F8FAFC; color: #1E293B; }
+    
+    /* 전체 배경 설정: 연한 미색과 SVG 패턴 */
+    html, body, [class*="css"] {
+        font-family: 'Pretendard', sans-serif;
+        background-color: #FFFEF5; /* 아주 연한 노란 빛 배경 */
+        background-image: 
+            /* 나루토 스파이럴 아이콘 (상단 좌측) */
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 10A40 40 0 0 1 50 90A40 40 0 0 1 50 10M50 20A30 30 0 0 0 50 80A30 30 0 0 0 50 20M50 30A20 20 0 0 1 50 70A20 20 0 0 1 50 30' fill='none' stroke='%23FDE047' stroke-width='2'/%3E%3C/svg%3E"),
+            /* 물결 아이콘 (하단 우측) */
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='50' viewBox='0 0 150 50'%3E%3Cpath d='M0 25 Q 37.5 0, 75 25 T 150 25' fill='none' stroke='%23BBF7D0' stroke-width='4'/%3E%3C/svg%3E");
+        background-position: 5% 10%, 90% 90%;
+        background-repeat: no-repeat;
+        color: #1E293B;
+    }
+
+    /* 스트림릿 기본 요소 숨기기 */
     #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
+
+    /* 메인 카드 컨테이너: 동글동글하고 부드러운 느낌 */
     .main-card {
-        background: white; padding: 50px 40px; border-radius: 30px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.05); margin-bottom: 30px;
-        border: 1px solid #F1F5F9; text-align: center;
+        background: white;
+        padding: 50px 40px;
+        border-radius: 40px; /* 더 둥글게 */
+        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); /* 노란색 톤의 부드러운 그림자 */
+        margin-bottom: 30px;
+        border: 3px solid #FEF9C3; /* 연노랑 테두리 */
+        text-align: center;
     }
-    .question-text { font-size: 28px; font-weight: 700; color: #0F172A; line-height: 1.5; margin-bottom: 10px; }
+
+    /* 질문 텍스트 스타일 */
+    .question-text {
+        font-size: 26px;
+        font-weight: 800;
+        color: #334155;
+        line-height: 1.5;
+    }
+
+    /* 버튼 컨테이너 중앙 정렬 */
+    .stButton {
+        display: flex;
+        justify-content: center;
+    }
+
+    /* 버튼 기본 스타일: 진회색 */
     div.stButton > button {
-        width: 100%; height: 70px; border-radius: 20px; border: 1px dashed #E2E8F0;
-        background-color: white; color: #bbbbbb; font-size: 25px; font-weight: 600; transition: all 0.3s ease;
+        width: 280px; /* 버튼 너비 고정 */
+        height: 65px;
+        border-radius: 50px; /* 타원형 버튼 */
+        border: none;
+        background-color: #475569; /* 진회색 */
+        color: white;
+        font-size: 18px;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin: 0 auto;
     }
+
+    /* 버튼 호버 스타일: 노란색 배경 + 검정 글자 (고대비) + 연두 테두리 */
     div.stButton > button:hover {
-        border-color: #10B981; color: #10B981; text-decoration: black wavy underline; background-color: #F0FDF4;
-        transform: translateY(-3px); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.1);
+        background-color: #FACC15; /* 밝은 노랑 */
+        color: #000000; /* 검정 글자 (명도대비 극대화) */
+        border: 4px solid #4ADE80; /* 연두색 테두리 포인트 */
+        transform: scale(1.05); /* 살짝 커지는 효과 */
+        box-shadow: 0 10px 20px rgba(74, 222, 128, 0.2);
     }
-    .stProgress > div > div > div > div { background-color: #10B981; }
-    .persona-title { font-size: 32px; font-weight: 800; color: #10B981; margin-bottom: 15px; }
+
+    /* 프로그래스 바 (연두색) */
+    .stProgress > div > div > div > div {
+        background-color: #4ADE80;
+    }
+    
+    /* 결과 제목 (노랑/연두 포인트) */
+    .persona-title {
+        font-size: 36px;
+        font-weight: 900;
+        background: linear-gradient(to right, #EAB308, #22C55E);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
