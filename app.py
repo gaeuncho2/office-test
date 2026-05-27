@@ -5,11 +5,11 @@ st.set_page_config(page_title="UX Health Check", page_icon="🔍", layout="cente
 
 # 2. 진단 데이터 정의 (로직보다 먼저 선언되어야 NameError가 나지 않음)
 diagnostics = [
-    {"q": "배경과 텍스트의 명도 대비가 충분하여 저시력자도 읽기 편한가요?", "type": "V"},
+    {"q": "배경과 텍스트가 잘 구분되며 저시력자도 읽기 편한가요?", "type": "V"},
     {"q": "모든 입력 폼에 무엇을 적어야 하는지 명확한 레이블이 있나요?", "type": "I"},
-    {"q": "중요한 버튼의 크기가 터치 오작동을 방지할 만큼 충분히 큰가요?", "type": "C"},
-    {"q": "로딩이나 데이터 처리 시 사용자가 기다려야 함을 시각적으로 알리나요?", "type": "F"},
-    {"q": "키보드나 전용 패드만으로 모든 메뉴 이동이 가능하신가요?", "type": "C"},
+    {"q": "중요한 버튼의 크기가 조작 오작동을 방지할 만큼 충분히 큰가요?", "type": "C"},
+    {"q": "로딩이나 데이터 처리 중 사용자가 기다려야 함을 시각적으로 알리나요?", "type": "F"},
+    {"q": "키보드나 전용 패드만으로 모든 메뉴 이동이 가능한가요?", "type": "C"},
     {"q": "전문 용어 대신 누구나 이해하기 쉬운 보편적인 단어를 사용하나요?", "type": "I"},
     {"q": "이미지에 대한 대체 텍스트가 스크린 리더용으로 제공되고 있나요?", "type": "V"},
     {"q": "오류 메시지는 구체적이고 해결 방법을 함께 제시하나요?", "type": "F"},
@@ -19,23 +19,15 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. 에이전시 스타일 CSS 주입
 # 3. 아기자기한 에이전시 스타일 CSS 주입
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     
     /* 전체 배경 설정: 연한 미색과 SVG 패턴 */
+    * {font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;}
     html, body, [class*="css"] {
         font-family: 'Pretendard', sans-serif;
-        background-color: #FFFEF5; /* 아주 연한 노란 빛 배경 */
-        background-image: 
-            /* 나루토 스파이럴 아이콘 (상단 좌측) */
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 10A40 40 0 0 1 50 90A40 40 0 0 1 50 10M50 20A30 30 0 0 0 50 80A30 30 0 0 0 50 20M50 30A20 20 0 0 1 50 70A20 20 0 0 1 50 30' fill='none' stroke='%23FDE047' stroke-width='2'/%3E%3C/svg%3E"),
-            /* 물결 아이콘 (하단 우측) */
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='50' viewBox='0 0 150 50'%3E%3Cpath d='M0 25 Q 37.5 0, 75 25 T 150 25' fill='none' stroke='%23BBF7D0' stroke-width='4'/%3E%3C/svg%3E");
-        background-position: 5% 10%, 90% 90%;
-        background-repeat: no-repeat;
         color: #1E293B;
     }
 
@@ -45,20 +37,20 @@ st.markdown("""
     /* 메인 카드 컨테이너: 동글동글하고 부드러운 느낌 */
     .main-card {
         background: white;
-        padding: 50px 40px;
+        padding: 40px 40px;
         border-radius: 40px; /* 더 둥글게 */
         box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); /* 노란색 톤의 부드러운 그림자 */
-        margin-bottom: 30px;
-        border: 3px solid #FEF9C3; /* 연노랑 테두리 */
+        margin-bottom: 40px;
+        border: 1px solid #ddd;
         text-align: center;
     }
 
     /* 질문 텍스트 스타일 */
     .question-text {
-        font-size: 26px;
+        font-size: 27px;
         font-weight: 800;
         color: #334155;
-        line-height: 1.5;
+        line-height: 1.2;
     }
 
     /* 버튼 컨테이너 중앙 정렬 */
@@ -73,7 +65,7 @@ st.markdown("""
         height: 65px;
         border-radius: 50px; /* 타원형 버튼 */
         border: none;
-        background-color: #475569; /* 진회색 */
+        background-color: #eee; /* 진회색 */
         color: white;
         font-size: 18px;
         font-weight: 700;
@@ -83,9 +75,9 @@ st.markdown("""
 
     /* 버튼 호버 스타일: 노란색 배경 + 검정 글자 (고대비) + 연두 테두리 */
     div.stButton > button:hover {
-        background-color: #FACC15; /* 밝은 노랑 */
+        background-color: #475569; /* 밝은 노랑 */
         color: #000000; /* 검정 글자 (명도대비 극대화) */
-        border: 4px solid #4ADE80; /* 연두색 테두리 포인트 */
+        font-weight:bold;
         transform: scale(1.05); /* 살짝 커지는 효과 */
         box-shadow: 0 10px 20px rgba(74, 222, 128, 0.2);
     }
@@ -93,6 +85,7 @@ st.markdown("""
     /* 프로그래스 바 (연두색) */
     .stProgress > div > div > div > div {
         background-color: #4ADE80;
+        border:1px solid #aaa;
     }
     
     /* 결과 제목 (노랑/연두 포인트) */
