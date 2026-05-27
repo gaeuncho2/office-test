@@ -1,9 +1,9 @@
 import streamlit as st
 
-# 1. 페이지 설정 (최상단)
+# 1. 페이지 설정
 st.set_page_config(page_title="UX Health Check", page_icon="🔍", layout="centered")
 
-# 2. 진단 데이터 정의
+# 2. 진단 데이터
 diagnostics = [
     {"q": "배경과 텍스트가 잘 구분되며 저시력자도 읽기 편한가요?", "type": "V"},
     {"q": "모든 입력 폼에 무엇을 적어야 하는지 명확한 레이블이 있나요?", "type": "I"},
@@ -19,10 +19,10 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
+# 3. CSS (반응형 2열 & 2x2 그리드 강제)
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    
     * { font-family: 'Pretendard', sans-serif !important; }
     html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; }
     #MainMenu, footer, header { visibility: hidden; }
@@ -34,133 +34,65 @@ st.markdown("""
     }
     .question-text { font-size: 34px; font-weight: 800; color: #334155; line-height: 1.4; }
 
-    /* [1. PC 모드] 중앙 배치 */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: center !important;
-        align-items: center !important;
-    }
-    [data-testid="column"] { flex: none !important; width: auto !important; }
+    /* [결과창 2x2 강제] */
+    [data-testid="stHorizontalBlock"] { display: flex !important; flex-wrap: wrap !important; flex-direction: row !important; gap: 10px !important; }
+    [data-testid="column"] { flex: 1 1 calc(50% - 10px) !important; min-width: calc(50% - 10px) !important; max-width: 50% !important; }
 
-    div.stButton > button {
-        width: 250px !important; height: 65px; border-radius: 50px; border: none;
-        background-color: #eee !important; color: #333 !important;
-        font-size: 18px !important; font-weight: 700 !important;
+    /* [커스텀 버튼 스타일] */
+    .btn-container { display: flex; justify-content: center; gap: 20px; width: 100%; margin-top: 20px; }
+    .custom-btn {
+        width: 250px; height: 65px; border-radius: 50px; border: none;
+        background-color: #eee; color: #333; font-size: 18px; font-weight: 700;
+        text-decoration: none; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: 0.3s;
     }
+    .custom-btn:hover { background-color: #475569; color: white; }
 
-    /* ★★★ [반응형 핵심] 768px 이하에서 Streamlit의 강제 1열 배치를 찢어발기는 코드 ★★★ */
     @media (max-width: 768px) {
         .question-text { font-size: 22px !important; }
-
-        /* 모든 가로 블록의 모바일 수직 쌓기 기능을 해제 */
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"] {
-            flex-direction: row !important; /* 가로 고정 */
-            flex-wrap: wrap !important;    /* 2x2 허용 */
-            display: flex !important;
-            gap: 10px !important;
-        }
-
-        /* 컬럼의 너비를 강제로 반토막 (100%로 늘어나는 것 방지) */
-        div[data-testid="stAppViewContainer"] div[data-testid="column"] {
-            flex: 1 1 calc(50% - 10px) !important;
-            min-width: calc(50% - 10px) !important;
-            max-width: calc(50% - 5px) !important;
-            width: calc(50% - 10px) !important;
-        }
-
-        /* [2. 모바일 버튼 전체 너비 사용] */
-        div.stButton > button {
-            width: 100% !important;
-            height: 60px !important;
-            font-size: 14px !important;
-            margin: 0 !important;
-        }
-
-        /* [3. 결과 화면 지표 2x2] */
-        [data-testid="stMetricSimple"] {
-            background: white !important;
-            border: 1px solid #eee !important;
-            border-radius: 15px !important;
-            padding: 10px 0 !important;
-            width: 100% !important;
-        }
+        .btn-container { gap: 10px; padding: 0 10px; }
+        .custom-btn { width: 50% !important; height: 60px; font-size: 15px; }
+        [data-testid="stMetricSimple"] { background: white; border: 1px solid #eee; border-radius: 15px; padding: 10px 0; }
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 4. 세션 상태 초기화
-if 'step' not in st.session_state:
-    st.session_state.step = 0
-if 'scores' not in st.session_state:
-    st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
+# 4. 세션 초기화
+if 'step' not in st.session_state: st.session_state.step = 0
+if 'scores' not in st.session_state: st.session_state.scores = {'V':0, 'C':0, 'F':0, 'I':0}
 
-# 5. 헤더 섹션
-st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px; margin-bottom: 0;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-weight: 800; margin-top: 10px; margin-bottom: 40px;'>내 서비스 자가진단하기 📝</h1>", unsafe_allow_html=True)
-
-# 6. 메인 로직
+# 5. 로직
 if st.session_state.step < len(diagnostics):
-    total_q = len(diagnostics)
-    current_q_idx = st.session_state.step
-    progress_val = current_q_idx / total_q
-    st.progress(progress_val)
-    st.write(f"<p style='text-align: right; color: #64748B;'>{current_q_idx + 1} / {total_q}</p>", unsafe_allow_html=True)
+    current_idx = st.session_state.step
+    st.progress(current_idx / len(diagnostics))
+    
+    st.markdown(f'<div class="main-card"><p class="question-text">{diagnostics[current_idx]["q"]}</p></div>', unsafe_allow_html=True)
 
-    q_text = diagnostics[current_q_idx]['q']
-    st.markdown(f"""
-        <div class="main-card">
-            <p class="question-text">{q_text}</p>
-        </div>
-    """, unsafe_allow_html=True)
-
+    # ⚠️ 핵심: st.button 대신 query_params를 이용한 HTML 버튼 구현
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("네, 준수합니다", key=f"yes_{current_q_idx}"):
-            st.session_state.scores[diagnostics[current_q_idx]['type']] += 1
+        if st.button("네, 준수합니다", key=f"y_{current_idx}", use_container_width=True):
+            st.session_state.scores[diagnostics[current_idx]['type']] += 1
             st.session_state.step += 1
             st.rerun()
     with col2:
-        if st.button("아니요, 부족합니다", key=f"no_{current_q_idx}"):
+        if st.button("아니요, 부족합니다", key=f"n_{current_idx}", use_container_width=True):
             st.session_state.step += 1
             st.rerun()
 
 else:
+    # 결과 화면
     s = st.session_state.scores
-    
-    def get_persona(s):
-        total = sum(s.values())
-        if total >= 11: return "스마트 가이드 돌고래", "모두에게 친절한 지능형 서비스", "최고의 접근성입니다! 전문가의 디테일 한 스푼만 더하면 완벽합니다."
-        if s['V'] <= 1: return "눈 가린 코끼리", "시각적 장벽이 높은 거대 서비스", "시각 요소 개선이 시급합니다. 고령층 이탈률이 매우 높을 것으로 보입니다."
-        if s['C'] <= 1: return "잠자는 거북이", "조작이 답답한 미로형 서비스", "사용자 동선 재설계가 필요합니다. 터치 및 키보드 조작성을 높여주세요."
-        if s['F'] <= 1: return "까칠한 고슴도치", "피드백이 불친절한 예민한 서비스", "오류 안내와 상태 피드백을 강화하여 사용자 심리적 불안을 해소하세요."
-        return "과묵한 진돗개", "기본은 하지만 센스가 부족한 서비스", "기능은 작동하지만, 사용자 배려를 위한 UX 디테일 보완이 권장됩니다."
-
-    p_name, p_sub, p_desc = get_persona(s)
-
-    st.markdown(f"""
-        <div class="main-card">
-            <p class="persona-title">{p_name}</p>
-            <h3>{p_sub}</h3>
-            <p style="font-size: 18px; color: #475569;">{p_desc}</p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f'<div class="main-card"><p class="persona-title">진단 완료!</p><p>{sum(s.values())}점입니다.</p></div>', unsafe_allow_html=True)
     
     st.subheader("📊 영역별 상세 지표")
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("시각 배려", f"{s['V']}/3")
-    col2.metric("조작 편의", f"{s['C']}/3")
-    col3.metric("반응/알림", f"{s['F']}/3")
-    col4.metric("보편 설계", f"{s['I']}/3")
-    
-    st.write("---")
-    
-    res_col1, res_col2 = st.columns(2)
-    with res_col1:
-        if st.button("전문 컨설팅 문의하기", key="final_contact"):
-            st.success("📩 요청이 접수되었습니다! 곧 연락드릴게요.")
-    with res_col2:
-        if st.button("다시 테스트하기", key="final_restart"):
-            st.session_state.step = 0
-            st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
-            st.rerun()
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("시각", f"{s['V']}/3")
+    c2.metric("조작", f"{s['C']}/3")
+    c3.metric("반응", f"{s['F']}/3")
+    c4.metric("보편", f"{s['I']}/3")
+
+    if st.button("다시 하기", use_container_width=True):
+        st.session_state.step = 0
+        st.session_state.scores = {'V':0, 'C':0, 'F':0, 'I':0}
+        st.rerun()
