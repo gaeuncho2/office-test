@@ -83,47 +83,27 @@ st.markdown("""
     div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
         display: flex !important; justify-content: space-between !important; width: 100% !important;
     }
-    /* ★★★ 모바일 레이아웃 종결 (이것만 교체하세요) ★★★ */
-    @media (max-width: 768px) {
-        /* 질문 텍스트 최적화 */
-        .question-text { font-size: 20px !important; line-height: 1.3 !important; }
+   @media (max-width: 640px) {
+        /* 카드의 패딩을 줄여 공간 확보 */
+        .main-card { padding: 25px 15px; }
+        .question-text { font-size: 20px !important; }
 
-        /* 1. 버튼 가로 정렬 강제 (Streamlit의 100% 너비 강제 해제) */
-        /* 선택자를 극도로 구체화하여 Streamlit 자체 캐시 설정을 덮어씁니다. */
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"] {
-            display: flex !important;
-            flex-direction: row !important; /* 무조건 가로 */
-            flex-wrap: wrap !important;    /* 2x2 허용 */
-            width: 100% !important;
-            gap: 10px !important;
-        }
-
-        /* 버튼 및 지표를 감싸는 컬럼의 너비를 50% 미만으로 박제 */
-        div[data-testid="stAppViewContainer"] div[data-testid="column"] {
-            width: calc(50% - 10px) !important; 
-            flex: 1 1 calc(50% - 10px) !important;
-            min-width: calc(50% - 10px) !important; /* 세로로 늘어나는 것 방지 */
-            max-width: calc(50% - 5px) !important;
-        }
-
-        /* 버튼 스타일 보정 */
-        div.stButton > button {
-            width: 100% !important;
-            height: 60px !important;
-            font-size: 14px !important;
-            margin: 0 !important;
-            padding: 0 5px !important;
-        }
-
-        /* 2. 결과창 지표(Metric) 2x2 디자인 보정 */
-        [data-testid="stMetricSimple"] {
-            background: white !important;
-            border: 1px solid #eee !important;
-            border-radius: 15px !important;
-            padding: 10px 0 !important;
-            display: flex !important;
-            flex-direction: column !important;
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+            flex-direction: row !important;
             align-items: center !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
+            width: 100% !important; /* 버튼 감싸는 박스 너비 100% */
+            display:flex;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        div.stButton > button {
+            width:auto;
+            max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
+            height: 60px;
+            font-size: 17px !important;
+            margin-bottom:30px;
         }
     }
     </style>
