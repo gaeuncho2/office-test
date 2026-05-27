@@ -32,7 +32,7 @@ st.markdown("""
         box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 40px;
         border: 1px solid #ddd; text-align: center;
     }
-    .question-text { font-size: 34px; font-weight: 800; color: #334155; line-height: 1.4; }
+    .question-text { font-size: 34px; font-weight: 800; color: #334155; font-size:25px; line-height: 1.4; }
 
     /* 1. 버튼이 포함된 컬럼만 골라내어 중앙 정렬 (결과창 Metric은 건드리지 않음) */
     div[data-testid="stHorizontalBlock"]:has(div.stButton) {
@@ -99,7 +99,6 @@ st.markdown("""
         }
 
         div.stButton > button {
-            width: 100% !important; /* 버튼이 모바일 너비에 꽉 차게 */
             max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
             height: 60px;
             font-size: 17px !important;
@@ -115,7 +114,7 @@ if 'scores' not in st.session_state: st.session_state.scores = {'V': 0, 'C': 0, 
 
 # 5. 헤더
 st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-weight: 800;'>내 서비스<br> 자가진단하기 📝</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-weight: 800;'>📝 내 서비스<br> 자가진단하기</h1>", unsafe_allow_html=True)
 
 #6. 메인 로직
 if st.session_state.step < len(diagnostics):
