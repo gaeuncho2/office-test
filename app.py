@@ -110,51 +110,57 @@ st.markdown("""
         margin-bottom: 10px;
     }
 
-    /* ★ 모바일 반응형 핵심 수정 ★ */
-    /* ★ 모바일 반응형 가로 꽉 찬 배치 ★ */
+  /* ★ 모바일 반응형 완벽 보정 ★ */
     @media (max-width: 768px) {
-        /* 질문 텍스트 크기 최적화 */
+        /* 질문 텍스트 크기 조절 */
         .question-text {
             font-size: 24px !important; 
-            line-height: 1.3 !important;
+            line-height: 1.4 !important;
             word-break: keep-all;
         }
-        
-        .main-card {
-            padding: 30px 15px !important;
-            margin-bottom: 20px !important;
-        }
 
-        /* 1. 버튼 컨테이너를 가로로 배치하고 중앙 정렬 */
+        /* 1. 버튼 레이아웃: 텍스트 크기에 갇히지 않고 화면 폭 가득 채우기 */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) {
             display: flex !important;
-            flex-direction: row !important; /* 가로 유지 */
+            flex-direction: row !important; /* 가로 배치 유지 */
             justify-content: center !important;
-            align-items: center !important;
-            gap: 10px !important; /* 버튼 사이 간격 */
+            gap: 10px !important;
             width: 100% !important;
         }
 
-        /* 2. 각 버튼 컬럼이 가로 폭의 절반을 차지하도록 설정 */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-            flex: 1 !important; /* 남은 공간을 똑같이 나눠가짐 */
-            min-width: 0 !important; /* 좁은 화면 대응 */
+            flex: 1 1 0% !important; /* 중요: 모든 버튼 컬럼이 동일한 비율로 확장됨 */
+            min-width: 0 !important;
         }
 
-        /* 3. 버튼 스타일: 가로 길이를 100%로 지정 */
         div.stButton > button {
-            width: 100% !important; /* 컬럼 너비에 꽉 맞춤 */
-            max-width: none !important; /* 고정 크기 해제 */
+            width: 100% !important; /* 부모 컬럼 너비에 100% 맞춤 */
             height: 60px !important;
-            font-size: 16px !important; /* 글자 크기 최적화 */
+            font-size: 15px !important;
             margin: 0 !important;
-            padding: 0 5px !important;
-            white-space: nowrap !important; /* 글자 줄바꿈 방지 */
+            padding: 0 !important;
         }
 
-        /* 결과창 Metric 2열 배치 유지 */
+        /* 2. 결과창 상세 지표: 1열이 아닌 2행 2열(2x2)로 배치 */
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
+            display: flex !important;
+            flex-wrap: wrap !important; /* 줄바꿈 허용 */
+            justify-content: space-between !important;
+            gap: 10px !important;
+        }
+
         div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
-            min-width: 45% !important;
+            flex: 1 1 45% !important; /* 화면의 약 절반을 차지하게 하여 2개씩 배치 */
+            min-width: 140px !important;
+            background: #fdfdfd;
+            border-radius: 15px;
+            padding: 10px;
+            border: 1px solid #eee;
+        }
+        
+        /* Metric 내부 정렬 보정 */
+        [data-testid="stMetricSimple"] {
+            text-align: center !important;
         }
     }
     </style>
