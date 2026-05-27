@@ -23,7 +23,20 @@ diagnostics = [
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    
+
+    /* [추가] 버튼을 감싸는 컬럼 컨테이너 자체를 중앙으로 정렬 */
+    [data-testid="stHorizontalBlock"] {
+        display: flex !important;
+        justify-content: center !important; /* 중앙으로 모으기 */
+        align-items: center !important;
+        gap: 0px !important; /* 컬럼 자체 간격은 없애고 버튼 마진으로 조절 */
+    }
+
+    /* [추가] 각 컬럼이 화면을 꽉 채우지 않도록 설정 */
+    [data-testid="stHorizontalBlock"] > div {
+        flex: none !important; 
+        width: auto !important;
+    }
     /* 전체 배경 설정: 연한 미색과 SVG 패턴 */
     * {font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;}
     html, body, [class*="css"] {
@@ -37,7 +50,7 @@ st.markdown("""
     /* 메인 카드 컨테이너: 동글동글하고 부드러운 느낌 */
     .main-card {
         background: white;
-        padding: 40px 40px;
+        padding: 30px 30px;
         border-radius: 40px; /* 더 둥글게 */
         box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); /* 노란색 톤의 부드러운 그림자 */
         margin-bottom: 40px;
@@ -59,10 +72,11 @@ st.markdown("""
         justify-content: center;
         color:#333333;
     }
+    
 
     /* 버튼 기본 스타일: 진회색 */
     div.stButton > button {
-        width: 280px; /* 버튼 너비 고정 */
+        width: 250px; /* 버튼 너비 고정 */
         height: 65px;
         border-radius: 50px; /* 타원형 버튼 */
         border: none;
@@ -70,7 +84,7 @@ st.markdown("""
         font-size: 18px;
         font-weight: 700;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin: 15px;
+        margin: 0 10px;
     }
 
     /* 버튼 호버 스타일 */
