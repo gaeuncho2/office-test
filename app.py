@@ -110,57 +110,67 @@ st.markdown("""
         margin-bottom: 10px;
     }
 
-  /* ★ 모바일 반응형 완벽 보정 ★ */
+  /* ★ 모바일 레이아웃 강제 교정 (최종) ★ */
     @media (max-width: 768px) {
-        /* 질문 텍스트 크기 조절 */
+        /* 1. 질문 텍스트 및 카드 최적화 */
         .question-text {
             font-size: 24px !important; 
             line-height: 1.4 !important;
             word-break: keep-all;
         }
+        .main-card { padding: 30px 15px !important; }
 
-        /* 1. 버튼 레이아웃: 텍스트 크기에 갇히지 않고 화면 폭 가득 채우기 */
+        /* 2. 버튼 가로 정렬 강제 (기존 그리드 무력화) */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) {
             display: flex !important;
-            flex-direction: row !important; /* 가로 배치 유지 */
+            flex-direction: row !important; /* 가로 유지 */
+            flex-wrap: nowrap !important; /* 절대 줄바꿈 금지 */
             justify-content: center !important;
-            gap: 10px !important;
             width: 100% !important;
+            gap: 10px !important;
         }
 
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-            flex: 1 1 0% !important; /* 중요: 모든 버튼 컬럼이 동일한 비율로 확장됨 */
+        /* 버튼을 감싸는 각 컬럼 요소 강제 확장 */
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
+            width: 50% !important; /* 정확히 절반 */
+            flex: 1 1 0% !important;
             min-width: 0 !important;
         }
 
         div.stButton > button {
-            width: 100% !important; /* 부모 컬럼 너비에 100% 맞춤 */
+            width: 100% !important; /* 부모 너비 꽉 채우기 */
             height: 60px !important;
             font-size: 15px !important;
-            margin: 0 !important;
             padding: 0 !important;
+            margin: 0 !important;
         }
 
-        /* 2. 결과창 상세 지표: 1열이 아닌 2행 2열(2x2)로 배치 */
+        /* 3. 결과창 지표(Metric) 2x2 그리드 강제 */
         div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
             display: flex !important;
-            flex-wrap: wrap !important; /* 줄바꿈 허용 */
+            flex-direction: row !important;
+            flex-wrap: wrap !important; /* 2개씩 끊기 위해 줄바꿈 허용 */
             justify-content: space-between !important;
+            width: 100% !important;
             gap: 10px !important;
         }
 
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
-            flex: 1 1 45% !important; /* 화면의 약 절반을 차지하게 하여 2개씩 배치 */
+        /* Metric 각 컬럼을 50% 미만으로 설정하여 한 줄에 2개씩 오도록 유도 */
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div[data-testid="column"] {
+            width: calc(50% - 10px) !important;
+            flex: 1 1 calc(50% - 10px) !important;
             min-width: 140px !important;
-            background: #fdfdfd;
-            border-radius: 15px;
-            padding: 10px;
-            border: 1px solid #eee;
+            background: #ffffff !important;
+            border-radius: 15px !important;
+            border: 1px solid #eee !important;
+            padding: 10px 0 !important;
         }
-        
-        /* Metric 내부 정렬 보정 */
+
+        /* Metric 내부 레이아웃 중앙 정렬 */
         [data-testid="stMetricSimple"] {
-            text-align: center !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
         }
     }
     </style>
