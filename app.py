@@ -90,7 +90,7 @@ st.markdown("""
         display: flex !important;
         flex-direction: row !important; /* 무조건 가로로 나열 */
         flex-wrap: nowrap !important;   /* 절대로 아래로 떨어지지 마라 */
-        gap: 10px !important;
+        gap: 0px !important;
     }
 
     /* 2. 컬럼 박스: 너비를 50%로 제한 (핵심) */
