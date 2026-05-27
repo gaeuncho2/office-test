@@ -57,6 +57,7 @@ st.markdown("""
     .stButton {
         display: flex;
         justify-content: center;
+        color:#aaa;
     }
 
     /* 버튼 기본 스타일: 진회색 */
@@ -66,7 +67,7 @@ st.markdown("""
         border-radius: 50px; /* 타원형 버튼 */
         border: none;
         background-color: #eee; /* 진회색 */
-        color: white;
+        color: #eee;
         font-size: 18px;
         font-weight: 700;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
