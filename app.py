@@ -19,44 +19,42 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. CSS 주입 (버튼만 타겟팅)
+# 3. CSS 주입 (버튼 가로 정렬 절대 강제)
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    * { font-family: 'Pretendard', sans-serif !important; }
-    html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; overflow-x: hidden; }
+    * { font-family: 'Pretendard', sans-serif !important; box-sizing: border-box; }
+    html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; }
     #MainMenu, footer, header { visibility: hidden; }
 
-    /* 질문 카드 스타일 */
+    /* 컨테이너 여백 최적화 */
+    [data-testid="stMainBlockContainer"] { padding: 2rem 1rem !important; }
+
+    /* 질문 카드 */
     .main-card {
-        background: white; padding: 40px 30px; border-radius: 40px;
-        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 40px;
+        background: white; padding: 40px 20px; border-radius: 40px;
+        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 30px;
         border: 1px solid #ddd; text-align: center;
     }
-    .question-text { font-size: 25px; font-weight: 800; color: #334155; line-height: 1.4; }
+    .question-text { font-size: 22px; font-weight: 800; color: #334155; line-height: 1.4; word-break: keep-all; }
 
-    /* ★ 버튼 정렬 핵심: 컨테이너 여백 강제 조정 ★ */
-    /* Streamlit 메인 컨테이너의 패딩을 줄여서 버튼이 들어갈 공간 확보 */
-    [data-testid="stMainBlockContainer"] {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-
-    /* 버튼이 담긴 가로 블록 설정 */
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+    /* ★ 컬럼 시스템을 무시하고 가로 배치를 강제하는 핵심 CSS ★ */
+    div[data-testid="stHorizontalBlock"] {
         display: flex !important;
-        flex-direction: row !important; /* 모바일 가로 정렬 강제 */
+        flex-direction: row !important; /* 모바일에서도 무조건 가로 */
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
         gap: 10px !important;
         width: 100% !important;
     }
-
-    /* 버튼 각각의 컬럼 설정 */
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
-        flex: 1 1 50% !important; /* 50:50 비율 */
+    
+    div[data-testid="column"] {
+        width: 48% !important; /* 컬럼 너비를 절반으로 고정 */
+        flex: 1 1 auto !important;
         min-width: 0 !important;
     }
 
-    /* 버튼 스타일 (기존 스타일 유지하되 너비만 100%) */
+    /* 버튼 스타일 */
     div.stButton > button {
         width: 100% !important;
         height: 65px;
@@ -67,20 +65,16 @@ st.markdown("""
         font-size: 16px;
         font-weight: 700;
         margin: 0 !important;
-        white-space: nowrap; /* 글자 줄바꿈 방지 */
+        white-space: nowrap;
     }
 
     div.stButton > button:hover {
         background-color: #475569;
         color: #fff;
     }
-    
-    /* 모바일에서 텍스트 크기 미세 조정 */
-    @media (max-width: 480px) {
-        div.stButton > button {
-            font-size: 14px !important;
-            height: 60px !important;
-        }
+
+    @media (max-width: 430px) {
+        div.stButton > button { font-size: 14px !important; height: 60px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -89,7 +83,7 @@ st.markdown("""
 if 'step' not in st.session_state: st.session_state.step = 0
 if 'scores' not in st.session_state: st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
 
-# 5. 헤더 (사용자 기존 스타일 유지)
+# 5. 헤더 (기존 스타일 복구)
 st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center; font-weight: 800;'>📝 내 서비스<br> 자가진단하기</h1>", unsafe_allow_html=True)
 
@@ -101,7 +95,7 @@ if st.session_state.step < len(diagnostics):
 
     st.markdown(f'<div class="main-card"><p class="question-text">{diagnostics[curr]["q"]}</p></div>', unsafe_allow_html=True)
 
-    # 버튼 레이아웃
+    # 버튼 가로 배치를 위한 컬럼 사용
     col1, col2 = st.columns(2)
     with col1:
         if st.button("네, 준수합니다", key=f"y_{curr}"):
