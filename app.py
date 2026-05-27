@@ -132,6 +132,8 @@ st.markdown("""
             max-width: 300px;
             margin: 5px 5px !important;
             display:flex;
+            justify-content: center !important;
+            align-items: center !important;
         }
 
         /* 결과창 Metric 2열 배치 */
