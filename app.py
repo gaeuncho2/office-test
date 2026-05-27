@@ -113,7 +113,7 @@ st.markdown("""
     /* ★ 모바일 반응형 핵심 수정 ★ */
     @media (max-width: 768px) {
         .question-text {
-            font-size: 28px !important; /* 모바일에서는 폰트 크기 대폭 축소 */
+            font-size: 24px !important; /* 모바일에서는 폰트 크기 대폭 축소 */
             line-height: 1.3 !important;
         }
         
