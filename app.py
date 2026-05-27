@@ -83,33 +83,49 @@ st.markdown("""
     div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
         display: flex !important; justify-content: space-between !important; width: 100% !important;
     }
-    @media (max-width: 640px) {
-        /* 카드의 패딩을 줄여 공간 확보 */
+    @media (max-width: 768px) {
         .main-card { padding: 25px 15px; }
         .question-text { font-size: 20px !important; }
 
-        /* 모바일에서는 컬럼을 세로로 꽉 차게 정렬 */
+        /* 1. 버튼 가로 배치 강제 */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            flex-direction: row !important;
-            align-items: center !important;
+            flex-direction: row !important; /* 세로가 아닌 가로로 설정 */
+            display: flex !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            width: 100% !important;
         }
 
+        /* 버튼 컬럼들이 반반씩 차지하도록 */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-            width: 100% !important; /* 버튼 감싸는 박스 너비 100% */
+            width: 50% !important;
+            flex: 1 1 auto !important;
         }
-    
-        div.stButton {
-            display:flex;
-            justify-content: center !important;
-            align-items: center !important;
-        }
+
         div.stButton > button {
-            width:auto;
-            max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
+            width: 100% !important;
             height: 60px;
-            font-size: 17px !important;
-            margin-bottom:30px;
+            font-size: 15px !important; /* 글자 크기를 살짝 줄여야 안 깨짐 */
+            margin: 0 !important;
         }
+
+        /* 2. 상세 지표(Metric) 2x2 배치 강제 */
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important; /* 2개 쓰고 줄바꿈 */
+            gap: 10px !important;
+        }
+
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
+            flex: 1 1 calc(50% - 10px) !important; /* 50% 너비 */
+            width: calc(50% - 10px) !important;
+            min-width: 120px !important;
+        }
+        
+        /* 사라졌던 문의하기 버튼이 보일 수 있게 여백 확보 */
+        div.stButton { margin-bottom: 10px; }
+    }
     }
     </style>
     """, unsafe_allow_html=True)
