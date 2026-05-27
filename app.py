@@ -83,53 +83,63 @@ st.markdown("""
         color: #fff !important;
     }
 
-    /* ★ [2 & 3. 반응형 모바일] ★ */
+    /* ★ [반응형 모바일] 버튼 사라짐 방지 및 2x2 완벽 보정 ★ */
     @media (max-width: 768px) {
         .question-text { font-size: 22px !important; }
 
-        /* [2. 반응형 버튼] 가로 배열 유지 및 전체 너비 활용 */
-        /* 스트림릿의 .st-emotion-cache 등을 무력화하기 위해 매우 구체적으로 타겟팅 */
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+        /* 1. 버튼 가로 배열: 너비를 전체 사용하여 5:5 배치 */
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+            display: flex !important;
             flex-direction: row !important;
-            flex-wrap: nowrap !important; /* 가로 유지 */
+            flex-wrap: nowrap !important; /* 줄바꿈 절대 금지 */
             width: 100% !important;
-            gap: 10px !important;
+            gap: 8px !important; /* 간격을 살짝 줄여 여유 확보 */
         }
 
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div.stButton) div[data-testid="column"] {
-            flex: 1 1 0% !important; /* 반씩 나눠 갖기 */
-            width: 48% !important;
-            min-width: 0 !important;
+        /* 각 컬럼이 정확히 유연하게 늘어나도록 설정 */
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
+            flex: 1 1 0% !important; /* 컨텐츠 크기 무시하고 동일 비율 확장 */
+            min-width: 0 !important; /* 박스가 텍스트보다 작아질 수 있게 허용 */
+            width: auto !important;
         }
 
         div.stButton > button {
-            width: 100% !important; /* 부모 너비 꽉 채우기 */
+            width: 100% !important; /* 컬럼 안을 꽉 채움 */
+            max-width: none !important;
             height: 60px !important;
-            font-size: 15px !important;
+            font-size: 14px !important; /* 글자 크기 축소하여 버튼 안착 */
             margin: 0 !important;
+            padding: 0 2px !important;
+            white-space: nowrap !important; /* 글자 줄바꿈 방지 */
+            overflow: hidden; /* 혹시 모를 넘침 방지 */
+            text-overflow: ellipsis; /* 글자가 너무 길면 ... 처리 */
         }
 
-        /* [3. 반응형 결과 화면 지표] 2x2 배열 배치 */
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
+        /* 2. 결과 화면 상세 점수: 2행 2열(2x2) 배치 */
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
             display: flex !important;
             flex-direction: row !important;
-            flex-wrap: wrap !important; /* 줄바꿈 허용 */
+            flex-wrap: wrap !important; /* 여기서 줄바꿈 허용으로 2x2 구현 */
             width: 100% !important;
-            gap: 10px !important;
+            gap: 8px !important;
         }
 
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) div[data-testid="column"] {
-            flex: 1 1 calc(50% - 10px) !important; /* 50%씩 차지 */
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div[data-testid="column"] {
+            flex: 1 1 calc(50% - 10px) !important; /* 50% 너비 확보 */
             width: calc(50% - 10px) !important;
             min-width: 120px !important;
+            margin-bottom: 5px;
         }
 
-        /* Metric 디자인 보정 */
+        /* Metric 상자 디자인 */
         [data-testid="stMetricSimple"] {
             background: white !important;
             border: 1px solid #eee !important;
             border-radius: 15px !important;
             padding: 10px 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
         }
     }
     </style>
