@@ -47,7 +47,7 @@ st.markdown("""
 
     /* 질문 텍스트 스타일 */
     .question-text {
-        font-size: 27px;
+        font-size: 30px;
         font-weight: 800;
         color: #334155;
         line-height: 1.2;
@@ -57,7 +57,7 @@ st.markdown("""
     .stButton {
         display: flex;
         justify-content: center;
-        color:#aaa;
+        color:#333333;
     }
 
     /* 버튼 기본 스타일: 진회색 */
@@ -66,15 +66,15 @@ st.markdown("""
         height: 65px;
         border-radius: 50px; /* 타원형 버튼 */
         border: none;
-        background-color: #eee; /* 진회색 */
-        color: #eee;
+        background-color: #eee;
         font-size: 18px;
         font-weight: 700;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         margin: 0 auto;
     }
+    div.stButton > button:first-child{margin-left:10px;}
 
-    /* 버튼 호버 스타일: 노란색 배경 + 검정 글자 (고대비) + 연두 테두리 */
+    /* 버튼 호버 스타일 */
     div.stButton > button:hover {
         background-color: #475569; /* 밝은 노랑 */
         color: #000000; /* 검정 글자 (명도대비 극대화) */
