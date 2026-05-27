@@ -1,74 +1,84 @@
 import streamlit as st
 
-# 1. 스타일 및 폰트 설정 (컨설팅 회사 느낌)
+# 1. 페이지 기본 설정 및 디자인 테마 정의
+st.set_page_config(page_title="UX/UI Health Check", page_icon="✨", layout="centered")
+
+# 2. 강력한 CSS 주입 (디자인 컨설팅사 스타일)
 st.markdown("""
     <style>
-    .main { background-color: #f8f9fa; }
-    .stButton>button { width: 100%; border-radius: 10px; height: 3.5em; font-weight: bold; }
-    h1 { color: #1E3A8A; } /* 신뢰감을 주는 네이비 */
+    /* 전체 배경 및 폰트 */
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    
+    html, body, [class*="css"] {
+        font-family: 'Pretendard', sans-serif;
+        background-color: #F8FAFC;
+    }
+
+    /* 스트림릿 기본 헤더/푸터 숨기기 */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+
+    /* 메인 카드 컨테이너 */
+    .main-card {
+        background: white;
+        padding: 40px;
+        border-radius: 24px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        border: 1px solid #E2E8F0;
+    }
+
+    /* 질문 텍스트 스타일 */
+    .question-text {
+        font-size: 26px;
+        font-weight: 700;
+        color: #0F172A;
+        line-height: 1.4;
+        margin-bottom: 30px;
+    }
+
+    /* 버튼 스타일 개조 */
+    div.stButton > button {
+        width: 100%;
+        height: 60px;
+        border-radius: 16px;
+        border: 1px solid #E2E8F0;
+        background-color: white;
+        color: #475569;
+        font-size: 18px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    div.stButton > button:hover {
+        border-color: #10B981;
+        color: #10B981;
+        background-color: #F0FDF4;
+        transform: translateY(-2px);
+    }
+
+    /* 프로그래스 바 스타일 */
+    .stProgress > div > div > div > div {
+        background-color: #10B981;
+    }
+    
+    /* 결과 강조 박스 */
+    .result-box {
+        background: #F0FDF4;
+        border-left: 5px solid #10B981;
+        padding: 20px;
+        border-radius: 12px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-if 'ux_scores' not in st.session_state:
-    st.session_state.ux_scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
+# 세션 상태 관리
 if 'step' not in st.session_state:
     st.session_state.step = 0
+if 'scores' not in st.session_state:
+    st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
 
-# 진단 문항 (UX/UI 전문가 관점)
+# 문항 데이터
 diagnostics = [
-    {"q": "주요 버튼의 크기가 손가락으로 누르기에 충분히 큰가요?", "type": "C"},
-    {"q": "저시력 사용자를 위해 배경과 글자의 대비가 명확한가요?", "type": "V"},
-    {"q": "오류 발생 시, 무엇이 잘못되었는지 쉬운 언어로 설명해주나요?", "type": "F"},
-    {"q": "처음 사용하는 고령자도 1분 안에 결제 단계까지 갈 수 있나요?", "type": "I"},
-    {"q": "로딩 중이거나 처리가 완료되었을 때 시각적/청각적 신호를 주나요?", "type": "F"},
-    {"q": "화면의 폰트 크기를 사용자가 조절할 수 있나요?", "type": "V"}
-]
-
-st.title("🔍 우리 서비스 UX/UI 건강검진")
-st.write("---")
-
-if st.session_state.step < len(diagnostics):
-    q_item = diagnostics[st.session_state.step]
-    st.subheader(f"Q{st.session_state.step + 1}. {q_item['q']}")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("네, 아주 잘 되어 있어요"):
-            st.session_state.ux_scores[q_item['type']] += 2
-            st.session_state.step += 1
-            st.rerun()
-    with col2:
-        if st.button("아니요, 개선이 필요해요"):
-            st.session_state.step += 1
-            st.rerun()
-
-else:
-    # 결과 로직 (점수가 낮을수록 컨설팅 필요도가 높은 페르소나 노출)
-    total_v = st.session_state.ux_scores['V']
-    total_c = st.session_state.ux_scores['C']
-    
-    st.balloons()
-    st.header("진단 리포트 요약")
-    
-    if total_v <= 1:
-        st.error("### 🐘 당신의 서비스는 '눈 가린 코끼리'")
-        st.write("콘텐츠는 풍부하지만, 접근성(시각적 배려)이 부족해 많은 사용자가 장벽을 느끼고 있습니다.")
-    elif total_c <= 1:
-        st.warning("### 🐢 당신의 서비스는 '잠자는 거북이'")
-        st.write("조작 반응이 느리거나 버튼 배치가 비효율적입니다. 사용자 이탈률이 높을 수 있습니다.")
-    else:
-        st.success("### 🏆 당신의 서비스는 '스마트 가이드 돌고래'")
-        st.write("기본적인 접근성이 훌륭합니다! 더 세밀한 고도화 전략을 추천드립니다.")
-
-    st.write("---")
-    st.subheader("💡 전문 컨설턴트의 한 줄 제안")
-    st.info("현재 진단 결과, '조작 편의성' 영역이 가장 취약합니다. 고령층 사용자를 위한 터치 가이드 개선이 시급해 보입니다.")
-    
-    # 마케팅 연결 버튼
-    if st.button("상세 컨설팅 제안서 요청하기 (무료)"):
-        st.write("📩 담당자 메일로 제안서 양식을 보냈습니다. (예시)")
-
-    if st.button("다시 진단하기"):
-        st.session_state.step = 0
-        st.session_state.ux_scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
-        st.rerun()
+    {"q": "시각 장애인을 위한 '이미지 대체 텍스트'가 적절히 제공되고 있나요
