@@ -19,12 +19,10 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. 아기자기한 에이전시 스타일 CSS 주입
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     
-    /* [기본 설정] */
     * { font-family: 'Pretendard', sans-serif !important; }
     html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; }
     #MainMenu, footer, header { visibility: hidden; }
@@ -36,54 +34,47 @@ st.markdown("""
     }
     .question-text { font-size: 34px; font-weight: 800; color: #334155; line-height: 1.4; }
 
-    /* [1. PC 모드] 중앙 정렬 및 가로 배치 */
+    /* [1. PC 모드] 중앙 배치 */
     [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         justify-content: center !important;
         align-items: center !important;
-        gap: 20px !important;
     }
     [data-testid="column"] { flex: none !important; width: auto !important; }
 
-    /* 버튼 스타일 */
     div.stButton > button {
         width: 250px !important; height: 65px; border-radius: 50px; border: none;
         background-color: #eee !important; color: #333 !important;
         font-size: 18px !important; font-weight: 700 !important;
-        transition: all 0.3s ease;
     }
-    div.stButton > button:hover { background-color: #475569 !important; color: #fff !important; }
 
-    /* ★★★ [2 & 3. 반응형 모바일] 절대 안 깨지는 설정 ★★★ */
+    /* ★★★ [반응형 핵심] 768px 이하에서 Streamlit의 강제 1열 배치를 찢어발기는 코드 ★★★ */
     @media (max-width: 768px) {
         .question-text { font-size: 22px !important; }
 
-        /* [핵심] Streamlit의 모든 모바일용 자동 줄바꿈 해제 */
-        [data-testid="stHorizontalBlock"] {
-            flex-direction: row !important; /* 가로 강제 */
-            flex-wrap: wrap !important;    /* 2x2를 위해 wrap 허용 */
-            gap: 8px !important;           /* 간격 좁게 고정 */
+        /* 모든 가로 블록의 모바일 수직 쌓기 기능을 해제 */
+        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"] {
+            flex-direction: row !important; /* 가로 고정 */
+            flex-wrap: wrap !important;    /* 2x2 허용 */
+            display: flex !important;
+            gap: 10px !important;
         }
 
-        /* [핵심] 모든 컬럼의 너비를 강제로 50% 미만으로 고정 */
-        /* Streamlit 캐시 클래스까지 모두 덮어쓰기 위해 선택자 강화 */
-        div[data-testid="column"] {
+        /* 컬럼의 너비를 강제로 반토막 (100%로 늘어나는 것 방지) */
+        div[data-testid="stAppViewContainer"] div[data-testid="column"] {
             flex: 1 1 calc(50% - 10px) !important;
-            min-width: calc(50% - 10px) !important; /* 이 부분이 버튼 사라짐 방지 핵심 */
+            min-width: calc(50% - 10px) !important;
             max-width: calc(50% - 5px) !important;
+            width: calc(50% - 10px) !important;
         }
 
         /* [2. 모바일 버튼 전체 너비 사용] */
-        div.stButton, div.stButton > button {
+        div.stButton > button {
             width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            font-size: 14px !important;
             height: 60px !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
+            font-size: 14px !important;
+            margin: 0 !important;
         }
 
         /* [3. 결과 화면 지표 2x2] */
