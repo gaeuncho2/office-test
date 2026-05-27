@@ -47,7 +47,7 @@ st.markdown("""
 
     /* 질문 텍스트 스타일 (PC 기준) */
     .question-text {
-        font-size: 50px;
+        font-size: 34px;
         font-weight: 800;
         color: #334155;
         line-height: 1.4;
@@ -113,7 +113,7 @@ st.markdown("""
     /* ★ 모바일 반응형 핵심 수정 ★ */
     @media (max-width: 768px) {
         .question-text {
-            font-size: 24px !important; /* 모바일에서는 폰트 크기 대폭 축소 */
+            font-size: 18px !important; /* 모바일에서는 폰트 크기 대폭 축소 */
             line-height: 1.3 !important;
         }
         
@@ -138,7 +138,7 @@ st.markdown("""
             min-width: 45% !important;
         }
         
-        h1 { font-size: 28px !important; }
+        h1 { font-size: 29px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
