@@ -40,17 +40,17 @@ st.markdown("""
         padding: 30px 30px;
         border-radius: 40px; /* 더 둥글게 */
         box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); /* 노란색 톤의 부드러운 그림자 */
-        margin-bottom: 20px;
+        margin-bottom: 40px;
         border: 1px solid #ddd;
         text-align: center;
     }
 
     /* 질문 텍스트 스타일 */
     .question-text {
-        font-size: 46px;
+        font-size: 50px;
         font-weight: 800;
         color: #334155;
-        line-height: 1.5;
+        line-height: 2;
     }
 
     /* 1. 버튼이 포함된 컬럼만 골라내어 중앙 정렬 (결과창 Metric은 건드리지 않음) */
