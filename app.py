@@ -90,7 +90,7 @@ st.markdown("""
 
         /* 모바일에서는 컬럼을 세로로 꽉 차게 정렬 */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            flex-direction: column !important;
+            flex-direction: row !important;
             align-items: center !important;
         }
 
@@ -104,7 +104,7 @@ st.markdown("""
             align-items: center !important;
         }
         div.stButton > button {
-            width:100%;
+            width:auto;
             max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
             height: 60px;
             font-size: 17px !important;
