@@ -3,7 +3,7 @@ import streamlit as st
 # 1. 페이지 설정
 st.set_page_config(page_title="UX Health Check", page_icon="🔍", layout="centered")
 
-# 2. 진단 데이터 (기존 내용 그대로 복구)
+# 2. 진단 데이터 (순정 유지)
 diagnostics = [
     {"q": "배경과 텍스트가 잘 구분되며 저시력자도 읽기 편한가요?", "type": "V"},
     {"q": "모든 입력 폼에 무엇을 적어야 하는지 명확한 레이블이 있나요?", "type": "I"},
@@ -19,7 +19,7 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. CSS 주입 (사용자 버튼 스타일 유지 + 레이아웃 강제)
+# 3. CSS (우선순위 대폭 강화)
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -29,54 +29,62 @@ st.markdown("""
 
     .main-card {
         background: white; padding: 40px 30px; border-radius: 40px;
-        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 40px;
+        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 20px;
         border: 1px solid #ddd; text-align: center;
     }
     .question-text { font-size: 34px; font-weight: 800; color: #334155; line-height: 1.4; }
 
-    /* [PC 레이아웃] 버튼 중앙 정렬 */
+    /* [PC 레이아웃] 버튼 중앙 */
     div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-        display: flex !important; justify-content: center !important; align-items: center !important; gap: 0px !important;
+        display: flex !important; justify-content: center !important; align-items: center !important;
     }
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div { flex: none !important; width: auto !important; }
+    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
+        flex: none !important; width: auto !important;
+    }
 
-    /* [사용자 버튼 스타일 복구] */
+    /* 버튼 스타일 */
     div.stButton > button {
         width: 250px !important; height: 65px; border-radius: 50px; border: none;
         background-color: #eee !important; color: #333 !important;
         font-size: 18px !important; font-weight: 700 !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin: 15px 10px !important;
+        margin: 10px !important;
     }
-    div.stButton > button:hover, div.stButton > button:focus {
-        background-color: #475569 !important; color: #fff !important;
-        font-weight: 900 !important; text-decoration: underline; transform: scale(1.05);
-    }
+    div.stButton > button:hover { background-color: #475569 !important; color: #fff !important; }
 
-    /* [결과창 Metric] */
-    div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
-        display: flex !important; justify-content: space-between !important; width: 100% !important;
-    }
-
-    /* ★ [모바일 반응형 완벽 강제] ★ */
+    /* ★★★ 모바일 반응형 끝장내기 ★★★ */
     @media (max-width: 768px) {
         .question-text { font-size: 24px !important; }
-        
-        /* 버튼 가로 2열 고정 */
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            flex-direction: row !important; flex-wrap: nowrap !important; width: 100% !important; gap: 10px !important;
-        }
-        div[data-testid="stAppViewContainer"] div[data-testid="column"]:has(div.stButton) {
-            width: 48% !important; flex: 1 1 0% !important; min-width: 0 !important;
-        }
-        div.stButton > button { width: 100% !important; margin: 0 !important; font-size: 15px !important; }
 
-        /* 결과창 상세 지표 2x2 고정 */
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
-            flex-wrap: wrap !important; flex-direction: row !important;
+        /* [핵심] 모든 수평 블록 가로 정렬 강제 */
+        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            width: 100% !important;
+            gap: 10px !important;
         }
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div[data-testid="column"] {
-            width: calc(50% - 10px) !important; flex: 1 1 calc(50% - 10px) !important;
+
+        /* [핵심] 컬럼 너비 50% 강제 (지표 2x2 및 버튼 가로 배치 동시 해결) */
+        div[data-testid="stAppViewContainer"] div[data-testid="column"] {
+            flex: 1 1 calc(50% - 10px) !important;
+            min-width: calc(50% - 10px) !important;
+            max-width: calc(50% - 5px) !important;
+        }
+
+        div.stButton > button {
+            width: 100% !important;
+            margin: 0 !important;
+            font-size: 14px !important;
+            height: 60px !important;
+        }
+
+        /* Metric 상자 시각화 */
+        [data-testid="stMetricSimple"] {
+            background: white !important;
+            border: 1px solid #eee !important;
+            border-radius: 15px !important;
+            padding: 10px 0 !important;
+            width: 100% !important;
         }
     }
     </style>
@@ -86,56 +94,46 @@ st.markdown("""
 if 'step' not in st.session_state: st.session_state.step = 0
 if 'scores' not in st.session_state: st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
 
-# 5. 헤더
-st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-weight: 800;'>내 서비스 자가진단하기 📝</h1>", unsafe_allow_html=True)
-
-# 6. 메인 로직
+# 5. 메인 로직
 if st.session_state.step < len(diagnostics):
     curr = st.session_state.step
     st.progress(curr / len(diagnostics))
-    st.write(f"<p style='text-align: right;'>{curr + 1} / {len(diagnostics)}</p>", unsafe_allow_html=True)
-
+    
     st.markdown(f'<div class="main-card"><p class="question-text">{diagnostics[curr]["q"]}</p></div>', unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
-    with col1:
+    # 버튼 가로 배치를 위한 columns
+    btn_col1, btn_col2 = st.columns(2)
+    with btn_col1:
         if st.button("네, 준수합니다", key=f"y_{curr}"):
             st.session_state.scores[diagnostics[curr]['type']] += 1
             st.session_state.step += 1
             st.rerun()
-    with col2:
+    with btn_col2:
         if st.button("아니요, 부족합니다", key=f"n_{curr}"):
             st.session_state.step += 1
             st.rerun()
 else:
-    # 결과 화면
+    # 7. 결과 화면
     s = st.session_state.scores
-    # (페르소나 로직 생략 없이 그대로 유지)
-    def get_persona(s):
-        total = sum(s.values())
-        if total >= 11: return "스마트 가이드 돌고래", "모두에게 친절한 지능형 서비스", "최고의 접근성입니다!"
-        if s['V'] <= 1: return "눈 가린 코끼리", "시각적 장벽이 높은 거대 서비스", "시각 요소 개선이 시급합니다."
-        if s['C'] <= 1: return "잠자는 거북이", "조작이 답답한 미로형 서비스", "사용자 동선 재설계가 필요합니다."
-        if s['F'] <= 1: return "까칠한 고슴도치", "피드백이 불친절한 예민한 서비스", "오류 안내를 강화하세요."
-        return "과묵한 진돗개", "기본은 하지만 센스가 부족한 서비스", "UX 디테일 보완이 권장됩니다."
-
-    p_name, p_sub, p_desc = get_persona(s)
-    st.markdown(f'<div class="main-card"><p class="persona-title">{p_name}</p><h3>{p_sub}</h3><p>{p_desc}</p></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="main-card"><p class="persona-title">진단 결과</p><h3>분석이 완료되었습니다.</h3></div>', unsafe_allow_html=True)
     
     st.subheader("📊 영역별 상세 지표")
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("시각 배려", f"{s['V']}/3")
-    c2.metric("조작 편의", f"{s['C']}/3")
-    c3.metric("반응/알림", f"{s['F']}/3")
-    c4.metric("보편 설계", f"{s['I']}/3")
+    # ⚠️ 이 columns(4)가 CSS를 통해 모바일에서 2x2로 정렬됩니다.
+    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+    m_col1.metric("시각 배려", f"{s['V']}/3")
+    m_col2.metric("조작 편의", f"{s['C']}/3")
+    m_col3.metric("반응/알림", f"{s['F']}/3")
+    m_col4.metric("보편 설계", f"{s['I']}/3")
     
     st.write("---")
+    
+    # 하단 버튼 가로 정렬
     res_col1, res_col2 = st.columns(2)
     with res_col1:
-        if st.button("컨설팅 문의하기", key="final_c"): st.success("접수되었습니다!")
+        if st.button("전문 컨설팅 문의하기", key="final_contact_btn"):
+            st.success("접수 완료!")
     with res_col2:
-        if st.button("다시 테스트하기", key="final_r"):
+        if st.button("다시 테스트하기", key="final_restart_btn"):
             st.session_state.step = 0
             st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
             st.rerun()
