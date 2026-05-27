@@ -1,6 +1,6 @@
 import streamlit as st
 
-# 1. 페이지 설정 (가장 상단에 위치)
+# 1. 페이지 설정
 st.set_page_config(page_title="UX Health Check", page_icon="🔍", layout="centered")
 
 # 2. 진단 데이터
@@ -19,102 +19,89 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. CSS 주입 (모바일 화면 이탈 방지 최종본)
+# 3. CSS 주입 (버튼만 타겟팅)
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    
-    /* 1. 전체 폰트 및 배경 설정 */
-    * { font-family: 'Pretendard', sans-serif !important; box-sizing: border-box; }
-    html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; overflow-x: hidden !important; }
-    
-    /* 2. Streamlit 기본 여백 강제 제거 (가장 중요) */
-    [data-testid="stMainBlockContainer"] {
-        padding: 2rem 1rem !important; /* 좌우 여백을 최소화 */
-        max-width: 100% !important;
-    }
-    header, footer, #MainMenu { visibility: hidden; }
+    * { font-family: 'Pretendard', sans-serif !important; }
+    html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; overflow-x: hidden; }
+    #MainMenu, footer, header { visibility: hidden; }
 
-    /* 3. 질문 카드 스타일 */
+    /* 질문 카드 스타일 */
     .main-card {
-        background: white; padding: 35px 20px; border-radius: 30px;
-        box-shadow: 0 10px 30px rgba(253, 224, 71, 0.15); margin-bottom: 25px;
-        border: 1px solid #eee; text-align: center;
+        background: white; padding: 40px 30px; border-radius: 40px;
+        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 40px;
+        border: 1px solid #ddd; text-align: center;
     }
-    .question-text { font-size: 20px; font-weight: 800; color: #334155; line-height: 1.4; word-break: keep-all; }
+    .question-text { font-size: 25px; font-weight: 800; color: #334155; line-height: 1.4; }
 
-    /* 4. 버튼 컨테이너 (모바일에서 가로 정렬 강제) */
-    div[data-testid="stHorizontalBlock"] {
+    /* ★ 버튼 정렬 핵심: 컨테이너 여백 강제 조정 ★ */
+    /* Streamlit 메인 컨테이너의 패딩을 줄여서 버튼이 들어갈 공간 확보 */
+    [data-testid="stMainBlockContainer"] {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    /* 버튼이 담긴 가로 블록 설정 */
+    div[data-testid="stHorizontalBlock"]:has(div.stButton) {
         display: flex !important;
-        flex-direction: row !important; /* 세로 쌓임 방지 */
-        flex-wrap: nowrap !important;   /* 줄바꿈 금지 */
-        justify-content: center !important;
-        gap: 8px !important;            /* 버튼 사이 간격 */
+        flex-direction: row !important; /* 모바일 가로 정렬 강제 */
+        gap: 10px !important;
         width: 100% !important;
     }
 
-    /* 5. 각 컬럼 너비 강제 (50% 이하로 고정) */
-    div[data-testid="column"] {
-        flex: 1 !important;
-        min-width: 0 !important; /* 중요: 내부 콘텐츠로 인해 늘어나는 것 방지 */
+    /* 버튼 각각의 컬럼 설정 */
+    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
+        flex: 1 1 50% !important; /* 50:50 비율 */
+        min-width: 0 !important;
     }
 
-    /* 6. 버튼 스타일 (글자 크기 및 높이 최적화) */
+    /* 버튼 스타일 (기존 스타일 유지하되 너비만 100%) */
     div.stButton > button {
         width: 100% !important;
-        height: 60px !important;
-        border-radius: 15px !important;
-        background-color: #eee !important;
-        color: #333 !important;
-        font-size: 14px !important; /* 390px에서도 글자 안 짤리게 함 */
-        font-weight: 700 !important;
-        border: none !important;
-        padding: 0 4px !important;
-        white-space: nowrap !important; /* 글자 자동 줄바꿈 방지 */
-    }
-
-    div.stButton > button:active, div.stButton > button:focus {
-        border: none !important;
-        box-shadow: none !important;
+        height: 65px;
+        border-radius: 50px;
+        border: none;
+        background-color: #eee;
+        color: #333;
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 !important;
+        white-space: nowrap; /* 글자 줄바꿈 방지 */
     }
 
     div.stButton > button:hover {
-        background-color: #475569 !important;
-        color: #fff !important;
+        background-color: #475569;
+        color: #fff;
     }
-
-    /* 결과창 Metric 2x2 정렬 */
-    @media (max-width: 768px) {
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
-            flex-wrap: wrap !important;
-        }
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
-            flex: 1 1 45% !important;
+    
+    /* 모바일에서 텍스트 크기 미세 조정 */
+    @media (max-width: 480px) {
+        div.stButton > button {
+            font-size: 14px !important;
+            height: 60px !important;
         }
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 4. 세션 상태 초기화
+# 4. 세션 초기화
 if 'step' not in st.session_state: st.session_state.step = 0
 if 'scores' not in st.session_state: st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
 
-# 5. 헤더 섹션
+# 5. 헤더 (사용자 기존 스타일 유지)
 st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-weight: 900; margin-top: -10px;'>📝 내 서비스 자가진단</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-weight: 800;'>📝 내 서비스<br> 자가진단하기</h1>", unsafe_allow_html=True)
 
 # 6. 메인 로직
 if st.session_state.step < len(diagnostics):
     curr = st.session_state.step
-    
-    # 진행바 및 숫자 표시
     st.progress(curr / len(diagnostics))
-    st.markdown(f"<p style='text-align: right; font-weight: 700; color: #64748b;'>{curr + 1} / {len(diagnostics)}</p>", unsafe_allow_html=True)
+    st.write(f"<p style='text-align: right;'>{curr + 1} / {len(diagnostics)}</p>", unsafe_allow_html=True)
 
-    # 질문 카드
     st.markdown(f'<div class="main-card"><p class="question-text">{diagnostics[curr]["q"]}</p></div>', unsafe_allow_html=True)
 
-    # ★ 버튼 정렬 영역 ★
+    # 버튼 레이아웃
     col1, col2 = st.columns(2)
     with col1:
         if st.button("네, 준수합니다", key=f"y_{curr}"):
@@ -126,7 +113,7 @@ if st.session_state.step < len(diagnostics):
             st.session_state.step += 1
             st.rerun()
 else:
-    # 결과 화면
+    # 결과 화면 (생략 없이 유지)
     s = st.session_state.scores
     def get_persona(s):
         total = sum(s.values())
@@ -134,7 +121,7 @@ else:
         return "과묵한 진돗개", "기본은 하지만 센스가 부족한 서비스"
 
     p_name, p_sub = get_persona(s)
-    st.markdown(f'<div class="main-card"><h2 style="margin:0;">{p_name}</h2><p style="color:#64748b; font-weight:700;">{p_sub}</p></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="main-card"><h2>{p_name}</h2><h3>{p_sub}</h3></div>', unsafe_allow_html=True)
     
     st.subheader("📊 영역별 상세 지표")
     c1, c2, c3, c4 = st.columns(4)
@@ -146,8 +133,7 @@ else:
     st.write("---")
     res_col1, res_col2 = st.columns(2)
     with res_col1:
-        if st.button("문의하기", key="final_contact"):
-            st.success("접수 완료!")
+        st.button("문의하기", key="final_contact")
     with res_col2:
         if st.button("다시 하기", key="final_restart"):
             st.session_state.step = 0
