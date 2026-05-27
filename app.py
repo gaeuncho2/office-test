@@ -131,6 +131,7 @@ st.markdown("""
             width: 100% !important; /* 버튼 너비 가득 채우기 */
             max-width: 300px;
             margin: 5px 5px !important;
+            display:flex;
         }
 
         /* 결과창 Metric 2열 배치 */
