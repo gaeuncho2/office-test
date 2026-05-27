@@ -47,7 +47,7 @@ st.markdown("""
 
     /* 질문 텍스트 스타일 */
     .question-text {
-        font-size: 30px;
+        font-size: 46px;
         font-weight: 800;
         color: #334155;
         line-height: 1.2;
@@ -70,16 +70,15 @@ st.markdown("""
         font-size: 18px;
         font-weight: 700;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin: 0 auto;
+        margin: 15px;
     }
-    div.stButton > button:first-child{margin-left:10px;}
 
     /* 버튼 호버 스타일 */
     div.stButton > button:hover {
         background-color: #475569; /* 밝은 노랑 */
         color: #fff;
         font-weight:900;
-        text-decoration: white wavy underline;
+        text-decoration: underline;
         transform: scale(1.05); /* 살짝 커지는 효과 */
         box-shadow: 0 10px 20px rgba(74, 222, 128, 0.2);
     }
@@ -143,7 +142,6 @@ if st.session_state.step < len(diagnostics):
 
 else:
     # 7. 결과 화면
-    st.balloons()
     s = st.session_state.scores
     
     # 페르소나 매칭 함수
@@ -174,7 +172,7 @@ else:
     col4.metric("보편 설계", f"{s['I']}/3")
     
     st.write("---")
-    if st.button("무료 컨설팅 제안서 요청하기"):
+    if st.button("컨설팅 문의 접수하기"):
         st.success("📩 담당자에게 진단 결과가 전송되었습니다. 곧 연락드리겠습니다!")
 
     if st.button("다시 테스트하기"):
