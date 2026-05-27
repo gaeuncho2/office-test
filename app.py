@@ -75,7 +75,7 @@ st.markdown("""
     /* 3. 결과 화면 Metric 컬럼은 기본 스타일(전체 너비 사용)을 유지하도록 방어 */
     div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
         display: flex !important;
-        justify-content: space-between !important;
+        justify-content: stretch !important;
         width: 100% !important;
     }
 
