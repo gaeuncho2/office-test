@@ -19,7 +19,7 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. CSS 주입 (가로 배치 강제 최적화)
+# 3. CSS 주입 (Streamlit 기본 버튼 숨기기 및 커스텀 스타일)
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -27,31 +27,28 @@ st.markdown("""
     html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; }
     #MainMenu, footer, header { visibility: hidden; }
 
-    [data-testid="stMainBlockContainer"] { padding: 2rem 1rem !important; }
-
-    /* 질문 카드 */
+    /* 메인 카드 */
     .main-card {
         background: white; padding: 40px 20px; border-radius: 40px;
         box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 30px;
         border: 1px solid #ddd; text-align: center;
     }
-    .question-text { font-size: 22px; font-weight: 800; color: #334155; line-height: 1.4; word-break: keep-all; }
+    .question-text { font-size: 22px; font-weight: 800; color: #334155; line-height: 1.4; }
 
-    /* ★ 가로 정렬 강제 레이아웃 ★ */
-    div[data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 10px !important;
-        align-items: center !important;
+    /* ★ 가로 배치를 위한 커스텀 버튼 박스 ★ */
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
     }
-    div[data-testid="column"] {
+    
+    /* Streamlit의 st.button을 이 컨테이너 안에서 가로로 강제 정렬 */
+    .button-container div[data-testid="column"] {
         flex: 1 !important;
-        width: 100% !important;
         min-width: 0 !important;
     }
 
-    /* 버튼 디자인 */
     div.stButton > button {
         width: 100% !important;
         height: 65px !important;
@@ -63,11 +60,12 @@ st.markdown("""
         font-weight: 700 !important;
         white-space: nowrap !important;
     }
+
     div.stButton > button:hover {
         background-color: #475569 !important;
         color: #fff !important;
     }
-
+    
     @media (max-width: 480px) {
         div.stButton > button { font-size: 14px !important; height: 60px !important; }
     }
@@ -90,55 +88,32 @@ if st.session_state.step < len(diagnostics):
 
     st.markdown(f'<div class="main-card"><p class="question-text">{diagnostics[curr]["q"]}</p></div>', unsafe_allow_html=True)
 
-    # 버튼 가로 배치 (st.columns 이용)
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("네, 준수합니다", key=f"y_{curr}"):
-            st.session_state.scores[diagnostics[curr]['type']] += 1
-            st.session_state.step += 1
-            st.rerun()
-    with col2:
-        if st.button("아니요, 부족합니다", key=f"n_{curr}"):
-            st.session_state.step += 1
-            st.rerun()
+    # ★ 가로 배치를 위해 st.container와 columns 조합 ★
+    # container로 감싸고 CSS에서 이 내부의 column 동작을 강제 제어합니다.
+    btn_layout = st.container()
+    with btn_layout:
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("네, 준수합니다", key=f"y_{curr}", use_container_width=True):
+                st.session_state.scores[diagnostics[curr]['type']] += 1
+                st.session_state.step += 1
+                st.rerun()
+        with col2:
+            if st.button("아니요, 부족합니다", key=f"n_{curr}", use_container_width=True):
+                st.session_state.step += 1
+                st.rerun()
 else:
-    # 7. 결과 화면
+    # 결과 화면
     s = st.session_state.scores
-    
-    def get_persona(s):
-        total = sum(s.values())
-        if total >= 11: return "스마트 가이드 돌고래", "모두에게 친절한 지능형 서비스", "최고의 접근성입니다!"
-        if s['V'] <= 1: return "눈 가린 코끼리", "시각적 장벽이 높은 거대 서비스", "시각 요소 개선이 시급합니다."
-        if s['C'] <= 1: return "잠자는 거북이", "조작이 답답한 미로형 서비스", "사용자 동선 재설계가 필요합니다."
-        if s['F'] <= 1: return "까칠한 고슴도치", "피드백이 불친절한 예민한 서비스", "오류 안내를 강화하세요."
-        return "과묵한 진돗개", "기본은 하지만 센스가 부족한 서비스", "UX 디테일 보완이 권장됩니다."
-
-    p_name, p_sub, p_desc = get_persona(s)
-
-    st.markdown(f'''
-        <div class="main-card">
-            <h2 style="color:#1E293B; margin-top:0;">{p_name}</h2>
-            <h4 style="color:#475569;">{p_sub}</h4>
-            <p style="color:#64748B;">{p_desc}</p>
-        </div>
-    ''', unsafe_allow_html=True)
-
-    st.subheader("📊 영역별 상세 지표")
-    
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("시각", f"{s['V']}/3")
-    c2.metric("조작", f"{s['C']}/3")
-    c3.metric("반응", f"{s['F']}/3")
-    c4.metric("보편", f"{s['I']}/3")
+    p_name = "스마트 가이드 돌고래" if sum(s.values()) >= 11 else "과묵한 진돗개"
+    st.markdown(f'<div class="main-card"><h2>{p_name}</h2><p>진단이 완료되었습니다.</p></div>', unsafe_allow_html=True)
     
     st.write("---")
-    
     res_col1, res_col2 = st.columns(2)
     with res_col1:
-        if st.button("문의하기", key="final_contact"):
-            st.success("📩 요청이 접수되었습니다!")
+        st.button("문의하기", key="final_contact", use_container_width=True)
     with res_col2:
-        if st.button("다시 하기", key="final_restart"):
+        if st.button("다시 하기", key="final_restart", use_container_width=True):
             st.session_state.step = 0
             st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
             st.rerun()
