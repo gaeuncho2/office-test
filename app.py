@@ -20,23 +20,21 @@ diagnostics = [
 ]
 
 # 3. 아기자기한 에이전시 스타일 CSS 주입 (반응형 보완)
-# 3. 아기자기한 에이전시 스타일 CSS 주입
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     
-    * {font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;}
+    * {font-family: 'Pretendard', sans-serif !important;}
     
+    /* 배경 설정 */
     html, body, [data-testid="stAppViewContainer"] {
         background-color: #FFFEF5 !important;
-        color: #1E293B;
     }
 
-    #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
-
+    /* 메인 카드 */
     .main-card {
         background: white;
-        padding: 40px 30px;
+        padding: 40px 20px;
         border-radius: 40px;
         box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15);
         margin-bottom: 20px;
@@ -49,24 +47,11 @@ st.markdown("""
         font-weight: 800;
         color: #334155;
         line-height: 1.4;
-        word-break: keep-all;
     }
 
-    /* [데스크탑] 버튼 레이아웃 */
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 10px !important;
-    }
-
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
-        flex: none !important;
-        width: auto !important;
-    }
-
+    /* 버튼 기본 스타일 */
     div.stButton > button {
-        width: 250px !important;
+        width: 100% !important;
         height: 65px;
         border-radius: 50px;
         border: none;
@@ -74,63 +59,45 @@ st.markdown("""
         color: #333 !important;
         font-size: 18px !important;
         font-weight: 700 !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.3s ease;
     }
 
-    div.stButton > button:hover {
-        background-color: #475569 !important;
-        color: #fff !important;
-        text-decoration: underline;
-        transform: scale(1.05);
-    }
-
-    /* ★ 모바일 반응형 최종 보정 ★ */
+    /* ★★★ 모바일 2열 강제 레이아웃 (핵심) ★★★ */
     @media (max-width: 768px) {
+        /* 1. 질문 텍스트 크기 축소 */
         .question-text { font-size: 22px !important; }
-        
-        /* 1. 버튼 가로 2열 배치 강제 */
-        /* 스트림릿의 모바일 전용 미디어쿼리를 무력화하기 위해 모든 부모 flex 설정을 덮어씁니다. */
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            flex-direction: row !important; 
-            flex-wrap: nowrap !important;
+
+        /* 2. 모든 가로 블록(st.columns)의 세로 정렬 기능을 끄고 가로로 강제 배치 */
+        [data-testid="stHorizontalBlock"] {
             display: flex !important;
+            flex-direction: row !important; /* 무조건 가로 */
+            flex-wrap: wrap !important;    /* 공간 부족 시 다음 줄로 (2x2 핵심) */
+            align-items: flex-start !important;
             width: 100% !important;
-        }
-
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
-            width: 48% !important; /* 가로 길이를 강제로 반토막 */
-            flex: 1 1 0% !important;
-            min-width: 0 !important;
-        }
-
-        div.stButton > button {
-            width: 100% !important; /* 줄어든 부모 너비에 꽉 맞춤 */
-            height: 60px !important;
-            font-size: 14px !important; /* 글자 잘림 방지 */
-            margin: 0 !important;
-        }
-
-        /* 2. 결과창 지표(Metric) 2x2 배치 강제 */
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important; /* 2개 쓰고 줄바꿈 */
             gap: 10px !important;
         }
 
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div[data-testid="column"] {
-            width: calc(50% - 10px) !important; /* 50%씩 차지하게 하여 2x2 구현 */
+        /* 3. 컬럼 하나의 너비를 50% 미만으로 강제 고정 */
+        /* 스트림릿이 주입하는 width: 100%를 !important로 이깁니다. */
+        [data-testid="column"] {
+            width: calc(50% - 10px) !important; /* 무조건 한 줄에 두 개만 */
             flex: 1 1 calc(50% - 10px) !important;
-            min-width: 120px !important;
-            background: #fff !important;
-            border-radius: 15px !important;
-            border: 1px solid #eee !important;
-            padding: 10px 5px !important;
+            min-width: 120px !important; /* 너무 작아지지 않게 */
         }
-        
-        /* Metric 내부 정렬 */
-        div[data-testid="stMetricSimple"] {
-            align-items: center !important;
+
+        /* 4. 버튼 스타일 미세 조정 */
+        div.stButton > button {
+            height: 60px !important;
+            font-size: 14px !important;
+            margin: 0 !important;
+        }
+
+        /* 5. 결과창 Metric 전용 스타일 */
+        [data-testid="stMetricSimple"] {
+            background: white !important;
+            border: 1px solid #eee !important;
+            border-radius: 15px !important;
+            padding: 10px 5px !important;
             text-align: center !important;
         }
     }
