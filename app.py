@@ -103,7 +103,7 @@ st.markdown("""
             max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
             height: 60px;
             font-size: 17px !important;
-            margin-bottom:30px;
+            margin:30px;
         }
     }
     </style>
