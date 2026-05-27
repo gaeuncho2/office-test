@@ -3,7 +3,7 @@ import streamlit as st
 # 1. 페이지 설정 (최상단)
 st.set_page_config(page_title="UX Health Check", page_icon="🔍", layout="centered")
 
-# 2. 진단 데이터 정의 (로직보다 먼저 선언되어야 NameError가 나지 않음)
+# 2. 진단 데이터 정의
 diagnostics = [
     {"q": "배경과 텍스트가 잘 구분되며 저시력자도 읽기 편한가요?", "type": "V"},
     {"q": "모든 입력 폼에 무엇을 적어야 하는지 명확한 레이블이 있나요?", "type": "I"},
@@ -19,41 +19,42 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. 아기자기한 에이전시 스타일 CSS 주입
+# 3. 아기자기한 에이전시 스타일 CSS 주입 (반응형 보완)
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     
-    /* 전체 배경 설정: 연한 미색과 SVG 패턴 */
-    * {font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;}
-    html, body, [class*="css"] {
-        font-family: 'Pretendard', sans-serif;
+    /* 전체 공통 설정 */
+    * {font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;}
+    
+    html, body, [data-testid="stAppViewContainer"] {
+        background-color: #FFFEF5 !important;
         color: #1E293B;
     }
 
-    /* 스트림릿 기본 요소 숨기기 */
     #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
 
-    /* 메인 카드 컨테이너: 동글동글하고 부드러운 느낌 */
+    /* 메인 카드 컨테이너 */
     .main-card {
         background: white;
-        padding: 30px 30px;
-        border-radius: 40px; /* 더 둥글게 */
-        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); /* 노란색 톤의 부드러운 그림자 */
-        margin-bottom: 40px;
+        padding: 40px 30px;
+        border-radius: 40px;
+        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15);
+        margin-bottom: 20px;
         border: 1px solid #ddd;
         text-align: center;
     }
 
-    /* 질문 텍스트 스타일 */
+    /* 질문 텍스트 스타일 (PC 기준) */
     .question-text {
         font-size: 50px;
         font-weight: 800;
         color: #334155;
-        line-height: 2.5;
+        line-height: 1.4;
+        word-break: keep-all;
     }
 
-    /* 1. 버튼이 포함된 컬럼만 골라내어 중앙 정렬 (결과창 Metric은 건드리지 않음) */
+    /* 버튼 레이아웃 정렬 (PC) */
     div[data-testid="stHorizontalBlock"]:has(div.stButton) {
         display: flex !important;
         justify-content: center !important;
@@ -61,49 +62,45 @@ st.markdown("""
         gap: 0px !important;
     }
 
-    /* 2. 버튼 쪽 컬럼만 너비를 자동으로 설정 */
     div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
         flex: none !important;
         width: auto !important;
     }
 
-    /* 버튼 기본 스타일 (기존 스타일 유지) */
+    /* 버튼 기본 스타일 */
     div.stButton > button {
         width: 250px !important;
         height: 65px;
         border-radius: 50px;
         border: none;
-        background-color: #eee;
-        color: #333;
-        font-size: 18px;
-        font-weight: 700;
+        background-color: #eee !important;
+        color: #333 !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin: 15px 10px !important; /* 버튼 사이 간격 */
+        margin: 10px !important;
     }
 
-    /* 버튼 호버 스타일 */
-    div.stButton > button:hover,
-    div.stButton > button:focus{
-        background-color: #475569;
-        color: #fff;
-        font-weight: 900;
+    div.stButton > button:hover, div.stButton > button:focus {
+        background-color: #475569 !important;
+        color: #fff !important;
+        font-weight: 900 !important;
         text-decoration: underline;
         transform: scale(1.05);
     }
 
-    /* 3. 결과 화면 Metric 컬럼은 기본 스타일(전체 너비 사용)을 유지하도록 방어 */
+    /* Metric 결과창 방어 */
     div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
         display: flex !important;
         justify-content: space-between !important;
         width: 100% !important;
     }
-    /* 프로그래스 바 (연두색) */
+
     .stProgress > div > div > div > div {
         background-color: #4ADE80;
-        border:1px solid #555555;
+        border: 1px solid #555555;
     }
     
-    /* 결과 제목 (노랑/연두 포인트) */
     .persona-title {
         font-size: 36px;
         font-weight: 900;
@@ -111,6 +108,37 @@ st.markdown("""
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 10px;
+    }
+
+    /* ★ 모바일 반응형 핵심 수정 ★ */
+    @media (max-width: 768px) {
+        .question-text {
+            font-size: 28px !important; /* 모바일에서는 폰트 크기 대폭 축소 */
+            line-height: 1.3 !important;
+        }
+        
+        .main-card {
+            padding: 30px 15px !important;
+            border-radius: 25px !important;
+        }
+
+        /* 모바일에서 버튼 세로 정렬 */
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+            flex-direction: column !important;
+        }
+
+        div.stButton > button {
+            width: 100% !important; /* 버튼 너비 가득 채우기 */
+            max-width: 300px;
+            margin: 5px 0 !important;
+        }
+
+        /* 결과창 Metric 2열 배치 */
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
+            min-width: 45% !important;
+        }
+        
+        h1 { font-size: 30px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -123,79 +151,4 @@ if 'scores' not in st.session_state:
 
 # 5. 헤더 섹션
 st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px; margin-bottom: 0;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-size: 46px; margin-top: 10px; margin-bottom: 40px;'>내 서비스 자가진단하기 📝</h1>", unsafe_allow_html=True)
-
-# 6. 메인 로직 시작
-if st.session_state.step < len(diagnostics):
-    # 진행률 표시
-    total_q = len(diagnostics)
-    current_q_idx = st.session_state.step
-    progress_val = current_q_idx / total_q
-    st.progress(progress_val)
-    st.write(f"<p style='text-align: right; color: #64748B;'>{current_q_idx + 1} / {total_q}</p>", unsafe_allow_html=True)
-
-    # 질문 카드 (문자열 리터럴 에러 방지를 위해 변수에 할당)
-    q_text = diagnostics[current_q_idx]['q']
-    st.markdown(f"""
-        <div class="main-card">
-            <p class="question-text">{q_text}</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # 선택 버튼
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("네, 준수합니다", key=f"yes_{current_q_idx}"):
-            st.session_state.scores[diagnostics[current_q_idx]['type']] += 1
-            st.session_state.step += 1
-            st.rerun()
-    with col2:
-        if st.button("아니요, 부족합니다", key=f"no_{current_q_idx}"):
-            st.session_state.step += 1
-            st.rerun()
-
-else:
-    # 7. 결과 화면
-    s = st.session_state.scores
-    
-    # 페르소나 매칭 함수
-    def get_persona(s):
-        total = sum(s.values())
-        if total >= 11: return "스마트 가이드 돌고래", "모두에게 친절한 지능형 서비스", "최고의 접근성입니다! 전문가의 디테일 한 스푼만 더하면 완벽합니다."
-        if s['V'] <= 1: return "눈 가린 코끼리", "시각적 장벽이 높은 거대 서비스", "시각 요소 개선이 시급합니다. 고령층 이탈률이 매우 높을 것으로 보입니다."
-        if s['C'] <= 1: return "잠자는 거북이", "조작이 답답한 미로형 서비스", "사용자 동선 재설계가 필요합니다. 터치 및 키보드 조작성을 높여주세요."
-        if s['F'] <= 1: return "까칠한 고슴도치", "피드백이 불친절한 예민한 서비스", "오류 안내와 상태 피드백을 강화하여 사용자 심리적 불안을 해소하세요."
-        return "과묵한 진돗개", "기본은 하지만 센스가 부족한 서비스", "기능은 작동하지만, 사용자 배려를 위한 UX 디테일 보완이 권장됩니다."
-
-    p_name, p_sub, p_desc = get_persona(s)
-
-    st.markdown(f"""
-        <div class="main-card">
-            <p class="persona-title">{p_name}</p>
-            <h3>{p_sub}</h3>
-            <p style="font-size: 20px; color: #475569;">{p_desc}</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # 상세 지표
-    st.subheader("📊 영역별 상세 지표")
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("시각 배려", f"{s['V']}/3")
-    col2.metric("조작 편의", f"{s['C']}/3")
-    col3.metric("반응/알림", f"{s['F']}/3")
-    col4.metric("보편 설계", f"{s['I']}/3")
-    
-    st.write("---")
-    
-    # [수정] 결과 화면 버튼들도 가로로 정렬하기 위해 컬럼 생성
-    res_col1, res_col2 = st.columns(2)
-    
-    with res_col1:
-        if st.button("전문 컨설팅 문의하기", key="final_contact"):
-            st.success("📩 요청이 접수되었습니다! 곧 연락드릴게요.")
-            
-    with res_col2:
-        if st.button("다시 테스트하기", key="final_restart"):
-            st.session_state.step = 0
-            st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
-            st.rerun()
+st.markdown("<h1 style='text-align: center; font-weight: 800; margin-top: 10px; margin-bottom: 40px;'>내 서비스 자가진단하기 📝</h1>", unsafe_allow_html=True
