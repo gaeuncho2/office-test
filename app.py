@@ -3,7 +3,7 @@ import streamlit as st
 # 1. 페이지 설정
 st.set_page_config(page_title="UX Health Check", page_icon="🔍", layout="centered")
 
-# 2. 진단 데이터 (기존 내용 그대로 복구)
+# 2. 진단 데이터 (기존과 동일)
 diagnostics = [
     {"q": "배경과 텍스트가 잘 구분되며 저시력자도 읽기 편한가요?", "type": "V"},
     {"q": "모든 입력 폼에 무엇을 적어야 하는지 명확한 레이블이 있나요?", "type": "I"},
@@ -19,38 +19,36 @@ diagnostics = [
     {"q": "제한 시간이 있는 경우, 사용자가 시간을 연장할 수 있는 옵션이 있나요?", "type": "F"}
 ]
 
-# 3. CSS 주입 (사용자 버튼 스타일 유지 + 레이아웃 강제)
+# 3. CSS 주입 (반응형 최적화 버전)
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     * { font-family: 'Pretendard', sans-serif !important; }
-    html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; }
+    html, body, [data-testid="stAppViewContainer"] { 
+        background-color: #FFFEF5 !important; 
+        overflow-x: hidden !important; /* 가로 스크롤 원천 차단 */
+    }
     #MainMenu, footer, header { visibility: hidden; }
 
+    /* 메인 카드 레이아웃 */
     .main-card {
-        background: white; padding: 40px 30px; border-radius: 40px;
-        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 40px;
+        background: white; padding: 40px 20px; border-radius: 40px;
+        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 30px;
         border: 1px solid #ddd; text-align: center;
     }
-    .question-text { font-size: 34px; font-weight: 800; color: #334155; font-size:25px; line-height: 1.4; }
+    .question-text { font-size: 25px; font-weight: 800; color: #334155; line-height: 1.4; }
+    .persona-title { font-size: 32px; font-weight: 900; color: #1e293b; margin-bottom: 10px; }
 
-    /* 1. 버튼이 포함된 컬럼만 골라내어 중앙 정렬 (결과창 Metric은 건드리지 않음) */
+    /* --- 버튼 컨테이너 로직 --- */
+    /* 버튼이 들어있는 stHorizontalBlock의 간격 최소화 */
     div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 0px !important;
+        gap: 10px !important;
     }
 
-    /* 2. 버튼 쪽 컬럼만 너비를 자동으로 설정 */
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-        flex: none !important;
-        width: auto !important;
-    }
-
-    /* 버튼 기본 스타일 (기존 스타일 유지) */
+    /* 버튼 기본 스타일: 고정 너비 제거하고 부모에 맞춤 */
     div.stButton > button {
-        width: 250px !important;
+        width: 100% !important; 
+        max-width: 300px; /* PC에서도 너무 커지지 않게 제한 */
         height: 65px;
         border-radius: 50px;
         border: none;
@@ -58,89 +56,50 @@ st.markdown("""
         color: #333;
         font-size: 18px;
         font-weight: 700;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin: 0 10px !important; /* 버튼 사이 간격 */
+        transition: all 0.2s ease;
+        margin: 0 auto !important;
+        display: block;
     }
 
-    /* 버튼 호버 스타일 */
-    div.stButton > button:hover,
-    div.stButton > button:focus{
+    div.stButton > button:hover {
         background-color: #475569;
         color: #fff;
-        font-weight: 900;
-        text-decoration: underline;
-        transform: scale(1.05);
+        transform: scale(1.02);
     }
 
-    /* 3. 결과 화면 Metric 컬럼은 기본 스타일(전체 너비 사용)을 유지하도록 방어 */
-    div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
-        display: flex !important;
-        justify-content: stretch !important;
-        width: 100% !important;
-    }
-
-    /* [결과창 Metric] */
-    div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
-        display: flex !important; justify-content: space-between !important; width: 100% !important;
-    }
-   /* 수정된 모바일 반응형 코드 */
-/* ★ 가로 스크롤 절대 방지 모바일 레이아웃 ★ */
+    /* --- 모바일 최적화 (768px 이하) --- */
     @media (max-width: 768px) {
-        /* 전체 컨테이너 여백 정리 */
-        .main-card { padding: 25px 15px !important; margin: 10px !important; }
+        .main-card { padding: 30px 15px !important; border-radius: 25px !important; }
         .question-text { font-size: 20px !important; }
-
-        /* 1. 버튼 가로 배치 (가로 스크롤 원천 차단) */
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+        
+        /* 컬럼 간격을 강제로 나란히 유지 */
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
             display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            width: 100% !important;
-            gap: 8px !important; /* 고정 간격 */
-            padding: 0 5px !important; /* 양옆 미세 여백 */
-            overflow-x: hidden !important; /* 혹시 모를 가로 스크롤 차단 */
+            flex-direction: row !important; /* 모바일에서도 가로 정렬 유지 */
+            gap: 8px !important;
         }
-
-        /* 각 버튼 박스: 너비 계산식 적용 (50% - 간격의 절반) */
-        div[data-testid="stAppViewContainer"] div[data-testid="column"]:has(div.stButton) {
-            flex: 1 1 calc(50% - 4px) !important;
-            width: calc(50% - 4px) !important;
-            max-width: calc(50% - 4px) !important;
-            min-width: 0 !important;
+        
+        div[data-testid="column"] {
+            flex: 1 !important; /* 1:1 비율 강제 */
+            min-width: 0 !important; /* 내용에 상관없이 줄어들게 설정 */
         }
 
         div.stButton > button {
-            width: 100% !important;
-            height: 60px !important;
-            font-size: 14px !important;
-            padding: 0 2px !important;
-            margin: 0 !important;
-            white-space: nowrap !important; /* 글자가 길어 버튼이 커지는 것 방지 */
+            height: 55px !important;
+            font-size: 15px !important;
+            padding: 0 5px !important;
+            word-break: keep-all; /* 단어 단위 줄바꿈 방지 */
         }
 
-        /* 2. 결과창 지표(Metric) 2x2 배치 (가로 스크롤 방지형) */
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
+        /* 결과창 Metric 2개씩 배치 */
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
             display: flex !important;
             flex-wrap: wrap !important;
-            flex-direction: row !important;
-            gap: 8px !important;
-            width: 100% !important;
         }
-
-        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div[data-testid="column"] {
-            flex: 1 1 calc(50% - 8px) !important;
-            width: calc(50% - 8px) !important;
-            max-width: calc(50% - 8px) !important;
-            margin-bottom: 5px !important;
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
+            flex: 1 1 40% !important;
+            margin-bottom: 10px !important;
         }
-
-        [data-testid="stMetricSimple"] {
-            background: white !important;
-            border: 1px solid #eee !important;
-            border-radius: 12px !important;
-            padding: 10px 0 !important;
-        }
-    }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -150,17 +109,18 @@ if 'step' not in st.session_state: st.session_state.step = 0
 if 'scores' not in st.session_state: st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
 
 # 5. 헤더
-st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-weight: 800;'>📝 내 서비스<br> 자가진단하기</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px; margin-top:20px;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-weight: 800; margin-bottom:30px;'>📝 내 서비스 자가진단</h1>", unsafe_allow_html=True)
 
-#6. 메인 로직
+# 6. 메인 로직
 if st.session_state.step < len(diagnostics):
     curr = st.session_state.step
     st.progress(curr / len(diagnostics))
-    st.write(f"<p style='text-align: right;'>{curr + 1} / {len(diagnostics)}</p>", unsafe_allow_html=True)
+    st.write(f"<p style='text-align: right; margin-bottom: 5px;'>{curr + 1} / {len(diagnostics)}</p>", unsafe_allow_html=True)
 
     st.markdown(f'<div class="main-card"><p class="question-text">{diagnostics[curr]["q"]}</p></div>', unsafe_allow_html=True)
 
+    # 버튼 가로 배치를 위해 컬럼 사용
     col1, col2 = st.columns(2)
     with col1:
         if st.button("네, 준수합니다", key=f"y_{curr}"):
@@ -174,7 +134,6 @@ if st.session_state.step < len(diagnostics):
 else:
     # 결과 화면
     s = st.session_state.scores
-    # (페르소나 로직 생략 없이 그대로 유지)
     def get_persona(s):
         total = sum(s.values())
         if total >= 11: return "스마트 가이드 돌고래", "모두에게 친절한 지능형 서비스", "최고의 접근성입니다!"
@@ -193,15 +152,11 @@ else:
     c3.metric("반응/알림", f"{s['F']}/3")
     c4.metric("보편 설계", f"{s['I']}/3")
     
-   # ... (결과 분석 카드 출력 후) ...
     st.write("---")
-    # [수정] 결과 화면 버튼들도 가로로 정렬하기 위해 컬럼 생성
     res_col1, res_col2 = st.columns(2)
-    
     with res_col1:
-        if st.button("서비스 컨설팅 문의하기", key="final_contact"):
-            st.success("📩 요청이 접수되었습니다! 곧 연락드릴게요.")
-            
+        if st.button("컨설팅 문의하기", key="final_contact"):
+            st.success("📩 접수되었습니다!")
     with res_col2:
         if st.button("다시 테스트하기", key="final_restart"):
             st.session_state.step = 0
