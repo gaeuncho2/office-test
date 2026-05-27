@@ -23,20 +23,7 @@ diagnostics = [
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
-    /* [추가] 버튼을 감싸는 컬럼 컨테이너 자체를 중앙으로 정렬 */
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        justify-content: center !important; /* 중앙으로 모으기 */
-        align-items: center !important;
-        gap: 0px !important; /* 컬럼 자체 간격은 없애고 버튼 마진으로 조절 */
-    }
-
-    /* [추가] 각 컬럼이 화면을 꽉 채우지 않도록 설정 */
-    [data-testid="stHorizontalBlock"] > div {
-        flex: none !important; 
-        width: auto !important;
-    }
+    
     /* 전체 배경 설정: 연한 미색과 SVG 패턴 */
     * {font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;}
     html, body, [class*="css"] {
@@ -66,37 +53,49 @@ st.markdown("""
         line-height: 1.2;
     }
 
-    /* 버튼 컨테이너 중앙 정렬 */
-    .stButton {
-        display: flex;
-        justify-content: center;
-        color:#333333;
+    /* 1. 버튼이 포함된 컬럼만 골라내어 중앙 정렬 (결과창 Metric은 건드리지 않음) */
+    div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0px !important;
     }
-    
 
-    /* 버튼 기본 스타일: 진회색 */
+    /* 2. 버튼 쪽 컬럼만 너비를 자동으로 설정 */
+    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
+        flex: none !important;
+        width: auto !important;
+    }
+
+    /* 버튼 기본 스타일 (기존 스타일 유지) */
     div.stButton > button {
-        width: 250px; /* 버튼 너비 고정 */
+        width: 250px !important;
         height: 65px;
-        border-radius: 50px; /* 타원형 버튼 */
+        border-radius: 50px;
         border: none;
         background-color: #eee;
+        color: #333;
         font-size: 18px;
         font-weight: 700;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin: 0 10px;
+        margin: 0 10px !important; /* 버튼 사이 간격 */
     }
 
     /* 버튼 호버 스타일 */
     div.stButton > button:hover {
-        background-color: #475569; /* 밝은 노랑 */
+        background-color: #475569;
         color: #fff;
-        font-weight:900;
+        font-weight: 900;
         text-decoration: underline;
-        transform: scale(1.05); /* 살짝 커지는 효과 */
-        box-shadow: 0 10px 20px rgba(74, 222, 128, 0.2);
+        transform: scale(1.05);
     }
 
+    /* 3. 결과 화면 Metric 컬럼은 기본 스타일(전체 너비 사용)을 유지하도록 방어 */
+    div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
+        display: flex !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+    }
     /* 프로그래스 바 (연두색) */
     .stProgress > div > div > div > div {
         background-color: #4ADE80;
@@ -186,10 +185,16 @@ else:
     col4.metric("보편 설계", f"{s['I']}/3")
     
     st.write("---")
-    if st.button("컨설팅 문의 접수하기"):
-        st.success("📩 담당자에게 진단 결과가 전송되었습니다. 곧 연락드리겠습니다!")
-
-    if st.button("다시 테스트하기"):
-        st.session_state.step = 0
-        st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
-        st.rerun()
+    
+    # [수정] 결과 화면 버튼들도 가로로 정렬하기 위해 컬럼 생성
+    res_col1, res_col2 = st.columns(2)
+    
+    with res_col1:
+        if st.button("전문 컨설팅 문의하기", key="final_contact"):
+            st.success("📩 요청이 접수되었습니다! 곧 연락드릴게요.")
+            
+    with res_col2:
+        if st.button("다시 테스트하기", key="final_restart"):
+            st.session_state.step = 0
+            st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
+            st.rerun()
