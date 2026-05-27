@@ -84,30 +84,63 @@ st.markdown("""
         display: flex !important; justify-content: space-between !important; width: 100% !important;
     }
    /* 수정된 모바일 반응형 코드 */
-@media (max-width: 768px) {
-    /* 1. 상위 부모: 가로 배치 강제 및 줄바꿈 방지 */
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-        display: flex !important;
-        flex-direction: row !important; /* 무조건 가로로 나열 */
-        flex-wrap: nowrap !important;   /* 절대로 아래로 떨어지지 마라 */
-        gap: 0px !important;
-    }
+/* ★ 가로 스크롤 절대 방지 모바일 레이아웃 ★ */
+    @media (max-width: 768px) {
+        /* 전체 컨테이너 여백 정리 */
+        .main-card { padding: 25px 15px !important; margin: 10px !important; }
+        .question-text { font-size: 20px !important; }
 
-    /* 2. 컬럼 박스: 너비를 50%로 제한 (핵심) */
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-        width: 50% !important; /* 100%에서 48%로 수정 (가로 배치의 핵심) */
-        flex: 1 1 0% !important;
-        display: flex !important;
-    }
+        /* 1. 버튼 가로 배치 (가로 스크롤 원천 차단) */
+        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            width: 100% !important;
+            gap: 8px !important; /* 고정 간격 */
+            padding: 0 5px !important; /* 양옆 미세 여백 */
+            overflow-x: hidden !important; /* 혹시 모를 가로 스크롤 차단 */
+        }
 
-    /* 3. 버튼: 50%짜리 부모 박스를 꽉 채우기 */
-    div.stButton > button {
-        width: 100% !important; /* 부모인 48% 박스 안을 꽉 채움 */
-        height: 60px;
-        font-size: 15px !important; /* 모바일에서 글자 안 잘리게 약간 축소 */
-        margin-bottom: 10px !important; /* 아래쪽 간격 적절히 조절 */
+        /* 각 버튼 박스: 너비 계산식 적용 (50% - 간격의 절반) */
+        div[data-testid="stAppViewContainer"] div[data-testid="column"]:has(div.stButton) {
+            flex: 1 1 calc(50% - 4px) !important;
+            width: calc(50% - 4px) !important;
+            max-width: calc(50% - 4px) !important;
+            min-width: 0 !important;
+        }
+
+        div.stButton > button {
+            width: 100% !important;
+            height: 60px !important;
+            font-size: 14px !important;
+            padding: 0 2px !important;
+            margin: 0 !important;
+            white-space: nowrap !important; /* 글자가 길어 버튼이 커지는 것 방지 */
+        }
+
+        /* 2. 결과창 지표(Metric) 2x2 배치 (가로 스크롤 방지형) */
+        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            flex-direction: row !important;
+            gap: 8px !important;
+            width: 100% !important;
+        }
+
+        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div[data-testid="column"] {
+            flex: 1 1 calc(50% - 8px) !important;
+            width: calc(50% - 8px) !important;
+            max-width: calc(50% - 8px) !important;
+            margin-bottom: 5px !important;
+        }
+
+        [data-testid="stMetricSimple"] {
+            background: white !important;
+            border: 1px solid #eee !important;
+            border-radius: 12px !important;
+            padding: 10px 0 !important;
+        }
     }
-}
     }
     </style>
     """, unsafe_allow_html=True)
