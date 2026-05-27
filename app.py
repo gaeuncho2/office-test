@@ -99,10 +99,26 @@ if st.session_state.step < len(diagnostics):
             st.session_state.step += 1
             st.rerun()
 else:
+
     # 결과 화면
+
     s = st.session_state.scores
-    p_name = "스마트 가이드 돌고래" if sum(s.values()) >= 11 else "과묵한 진돗개"
-    
+
+    # (페르소나 로직 생략 없이 그대로 유지)
+
+    def get_persona(s):
+
+        total = sum(s.values())
+
+        if total >= 11: return "스마트 가이드 돌고래", "모두에게 친절한 지능형 서비스", "최고의 접근성입니다!"
+
+        if s['V'] <= 1: return "눈 가린 코끼리", "시각적 장벽이 높은 거대 서비스", "시각 요소 개선이 시급합니다."
+
+        if s['C'] <= 1: return "잠자는 거북이", "조작이 답답한 미로형 서비스", "사용자 동선 재설계가 필요합니다."
+
+        if s['F'] <= 1: return "까칠한 고슴도치", "피드백이 불친절한 예민한 서비스", "오류 안내를 강화하세요."
+
+        return "과묵한 진돗개", "기본은 하지만 센스가 부족한 서비스", "UX 디테일 보완이 권장됩니다."
     st.markdown(f'<div class="main-card"><h2>{p_name}</h2></div>', unsafe_allow_html=True)
     st.subheader("📊 영역별 상세 지표")
     
