@@ -40,7 +40,7 @@ st.markdown("""
         padding: 30px 30px;
         border-radius: 40px; /* 더 둥글게 */
         box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); /* 노란색 톤의 부드러운 그림자 */
-        margin-bottom: 40px;
+        margin-bottom: 20px;
         border: 1px solid #ddd;
         text-align: center;
     }
@@ -82,7 +82,8 @@ st.markdown("""
     }
 
     /* 버튼 호버 스타일 */
-    div.stButton > button:hover {
+    div.stButton > button:hover,
+    div.stButton > button:focus{
         background-color: #475569;
         color: #fff;
         font-weight: 900;
@@ -121,8 +122,8 @@ if 'scores' not in st.session_state:
     st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
 
 # 5. 헤더 섹션
-st.markdown("<p style='text-align: center; color: #10B981; font-weight: 800; letter-spacing: 2px; margin-bottom: 0;'>UX/UI CONSULTING GROUP</p>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center; font-size: 46px; margin-top: 10px; margin-bottom: 40px;'>서비스 접근성 마스터 진단</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #76A1BE; font-weight: 800; letter-spacing: 2px; margin-bottom: 0;'>UX/UI CONSULTING</p>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-size: 46px; margin-top: 10px; margin-bottom: 40px;'>내 서비스 자가진단하기 📝</h1>", unsafe_allow_html=True)
 
 # 6. 메인 로직 시작
 if st.session_state.step < len(diagnostics):
