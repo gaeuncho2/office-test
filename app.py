@@ -111,34 +111,43 @@ st.markdown("""
     }
 
     /* ★ 모바일 반응형 핵심 수정 ★ */
+   /* ★ 모바일 반응형 가로 배치 수정 ★ */
     @media (max-width: 768px) {
         .question-text {
-            font-size: 28px !important; /* 모바일에서는 폰트 크기 대폭 축소 */
+            font-size: 26px !important; /* 텍스트 크기 조절 */
             line-height: 1.3 !important;
         }
         
         .main-card {
-            padding: 30px 15px !important;
-            border-radius: 25px !important;
+            padding: 25px 15px !important;
         }
 
-        /* 모바일에서 버튼 세로 정렬 */
+        /* 모바일에서도 가로 정렬 유지 */
         div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            flex-direction: column !important;
+            flex-direction: row !important; /* 가로 방향 강제 */
+            justify-content: center !important;
+            flex-wrap: nowrap !important; /* 줄바꿈 방지 */
+            gap: 10px !important;
+        }
+
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
+            width: 48% !important; /* 각 버튼 컬럼이 절반씩 차지 */
+            flex: 1 1 auto !important;
         }
 
         div.stButton > button {
-            width: 100% !important; /* 버튼 너비 가득 채우기 */
-            max-width: 300px;
-            margin: 5px 0 !important;
+            width: 100% !important; /* 부모 컬럼 너비에 맞춤 */
+            min-width: 0px !important; /* 최소 너비 해제 */
+            height: 55px !important; /* 높이 약간 조절 */
+            font-size: 15px !important; /* 글자 크기 살짝 줄임 (잘림 방지) */
+            margin: 0 !important;
+            padding: 0 5px !important;
         }
 
-        /* 결과창 Metric 2열 배치 */
+        /* 결과창 Metric 2열 배치 유지 */
         div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
             min-width: 45% !important;
         }
-        
-        h1 { font-size: 30px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
