@@ -50,7 +50,7 @@ st.markdown("""
         font-size: 50px;
         font-weight: 800;
         color: #334155;
-        line-height: 2;
+        line-height: 2.5;
     }
 
     /* 1. 버튼이 포함된 컬럼만 골라내어 중앙 정렬 (결과창 Metric은 건드리지 않음) */
@@ -78,7 +78,7 @@ st.markdown("""
         font-size: 18px;
         font-weight: 700;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        margin: 0 10px !important; /* 버튼 사이 간격 */
+        margin: 15px 10px !important; /* 버튼 사이 간격 */
     }
 
     /* 버튼 호버 스타일 */
