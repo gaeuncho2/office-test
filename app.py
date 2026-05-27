@@ -103,11 +103,30 @@ if st.session_state.step < len(diagnostics):
                 st.session_state.step += 1
                 st.rerun()
 else:
-    # 결과 화면
+    # 7. 결과 판별 로직
     s = st.session_state.scores
-    p_name = "스마트 가이드 돌고래" if sum(s.values()) >= 11 else "과묵한 진돗개"
-    st.markdown(f'<div class="main-card"><h2>{p_name}</h2><p>진단이 완료되었습니다.</p></div>', unsafe_allow_html=True)
+    total = sum(s.values())
     
+    if total >= 11:
+        res = ("스마트 가이드 돌고래", "모두에게 친절한 지능형 서비스", "최고의 접근성입니다! 사용자 경험이 매우 우수합니다.")
+    elif s['V'] <= 1:
+        res = ("눈 가린 코끼리", "시각적 장벽이 높은 거대 서비스", "시각 요소 개선이 시급합니다. 색 대비와 대체 텍스트를 점검하세요.")
+    elif s['C'] <= 1:
+        res = ("잠자는 거북이", "조작이 답답한 미로형 서비스", "사용자 동선 재설계가 필요합니다. 버튼 크기와 키보드 접근성을 높여주세요.")
+    elif s['F'] <= 1:
+        res = ("까칠한 고슴도치", "피드백이 불친절한 예민한 서비스", "오류 안내를 강화하세요. 사용자가 길을 잃지 않도록 적절한 피드백이 필요합니다.")
+    else:
+        res = ("과묵한 진돗개", "기본은 하지만 센스가 부족한 서비스", "UX 디테일 보완이 권장됩니다. 보편적인 용어 사용과 일관성을 높여보세요.")
+
+    # 결과 화면 출력
+    st.markdown(f"""
+        <div class="main-card">
+            <p class="result-name">{res[0]}</p>
+            <p class="result-slogan">"{res[1]}"</p>
+            <hr style="border: 0.5px solid #eee; margin: 20px 0;">
+            <p class="result-desc">{res[2]}</p>
+        </div>
+        """, unsafe_allow_html=True)    
     st.write("---")
     res_col1, res_col2 = st.columns(2)
     with res_col1:
