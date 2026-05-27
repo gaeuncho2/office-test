@@ -78,7 +78,18 @@ if 'step' not in st.session_state:
     st.session_state.step = 0
 if 'scores' not in st.session_state:
     st.session_state.scores = {'V': 0, 'C': 0, 'F': 0, 'I': 0}
-
-# 문항 데이터
-diagnostics = [
-    {"q": "시각 장애인을 위한 '이미지 대체 텍스트'가 적절히 제공되고 있나요
+    
+# 81번 라인 부근: 질문 카드 출력 부분
+    st.markdown(f"""
+        <div class="main-card">
+            <p class="question-text">{diagnostics[st.session_state.step]['q']}</p>
+        </div>
+    """, unsafe_allow_html=True)  # 여기서 따옴표 세 개(""")와 괄호를 꼭 확인하세요!
+    
+    # 선택지 버튼
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("예, 준수하고 있습니다", key=f"yes_{st.session_state.step}"): # key값 중복 방지
+            st.session_state.scores[diagnostics[st.session_state.step]['type']] += 2
+            st.session_state.step += 1
+            st.rerun()
