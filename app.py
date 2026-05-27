@@ -121,8 +121,8 @@ else:
     # 결과 화면 출력
     st.markdown(f"""
         <div class="main-card">
-            <p class="result-name">{res[0]}</p>
-            <p class="result-slogan">"{res[1]}"</p>
+            <h2 class="result-name">{res[0]}</h2>
+            <h3 class="result-slogan">"{res[1]}"</h3>
             <hr style="border: 0.5px solid #eee; margin: 20px 0;">
             <p class="result-desc">{res[2]}</p>
         </div>
