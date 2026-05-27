@@ -99,6 +99,8 @@ st.markdown("""
         }
 
         div.stButton > button {
+            display:flex;
+            width:250px;
             max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
             height: 60px;
             font-size: 17px !important;
