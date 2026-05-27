@@ -24,122 +24,75 @@ st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     
-    * {font-family: 'Pretendard', sans-serif !important;}
-    
-    html, body, [data-testid="stAppViewContainer"] {
-        background-color: #FFFEF5 !important;
-        color: #1E293B;
-    }
+    /* [기본 설정] */
+    * { font-family: 'Pretendard', sans-serif !important; }
+    html, body, [data-testid="stAppViewContainer"] { background-color: #FFFEF5 !important; }
+    #MainMenu, footer, header { visibility: hidden; }
 
-    #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
-
-    /* 메인 카드 */
     .main-card {
-        background: white;
-        padding: 40px 20px;
-        border-radius: 40px;
-        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15);
-        margin-bottom: 20px;
-        border: 1px solid #ddd;
-        text-align: center;
+        background: white; padding: 40px 20px; border-radius: 40px;
+        box-shadow: 0 15px 35px rgba(253, 224, 71, 0.15); margin-bottom: 20px;
+        border: 1px solid #ddd; text-align: center;
     }
+    .question-text { font-size: 34px; font-weight: 800; color: #334155; line-height: 1.4; }
 
-    .question-text {
-        font-size: 34px;
-        font-weight: 800;
-        color: #334155;
-        line-height: 1.4;
-    }
-
-    /* [1. PC 모드] 버튼 가로 배열 및 중앙 배치 */
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+    /* [1. PC 모드] 중앙 정렬 및 가로 배치 */
+    [data-testid="stHorizontalBlock"] {
         display: flex !important;
         flex-direction: row !important;
         justify-content: center !important;
         align-items: center !important;
         gap: 20px !important;
     }
+    [data-testid="column"] { flex: none !important; width: auto !important; }
 
-    /* PC에서 버튼 너비 적절히 제한 */
-    div[data-testid="stHorizontalBlock"]:has(div.stButton) div[data-testid="column"] {
-        flex: none !important;
-        width: auto !important;
-    }
-
+    /* 버튼 스타일 */
     div.stButton > button {
-        width: 250px !important; /* PC 기준 너비 */
-        height: 65px;
-        border-radius: 50px;
-        border: none;
-        background-color: #eee !important;
-        color: #333 !important;
-        font-size: 18px !important;
-        font-weight: 700 !important;
+        width: 250px !important; height: 65px; border-radius: 50px; border: none;
+        background-color: #eee !important; color: #333 !important;
+        font-size: 18px !important; font-weight: 700 !important;
         transition: all 0.3s ease;
     }
+    div.stButton > button:hover { background-color: #475569 !important; color: #fff !important; }
 
-    div.stButton > button:hover {
-        background-color: #475569 !important;
-        color: #fff !important;
-    }
-
-    /* ★ [반응형 모바일] 버튼 사라짐 방지 및 2x2 완벽 보정 ★ */
+    /* ★★★ [2 & 3. 반응형 모바일] 절대 안 깨지는 설정 ★★★ */
     @media (max-width: 768px) {
         .question-text { font-size: 22px !important; }
 
-        /* 1. 버튼 가로 배열: 너비를 전체 사용하여 5:5 배치 */
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important; /* 줄바꿈 절대 금지 */
+        /* [핵심] Streamlit의 모든 모바일용 자동 줄바꿈 해제 */
+        [data-testid="stHorizontalBlock"] {
+            flex-direction: row !important; /* 가로 강제 */
+            flex-wrap: wrap !important;    /* 2x2를 위해 wrap 허용 */
+            gap: 8px !important;           /* 간격 좁게 고정 */
+        }
+
+        /* [핵심] 모든 컬럼의 너비를 강제로 50% 미만으로 고정 */
+        /* Streamlit 캐시 클래스까지 모두 덮어쓰기 위해 선택자 강화 */
+        div[data-testid="column"] {
+            flex: 1 1 calc(50% - 10px) !important;
+            min-width: calc(50% - 10px) !important; /* 이 부분이 버튼 사라짐 방지 핵심 */
+            max-width: calc(50% - 5px) !important;
+        }
+
+        /* [2. 모바일 버튼 전체 너비 사용] */
+        div.stButton, div.stButton > button {
             width: 100% !important;
-            gap: 8px !important; /* 간격을 살짝 줄여 여유 확보 */
-        }
-
-        /* 각 컬럼이 정확히 유연하게 늘어나도록 설정 */
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div[data-testid="column"] {
-            flex: 1 1 0% !important; /* 컨텐츠 크기 무시하고 동일 비율 확장 */
-            min-width: 0 !important; /* 박스가 텍스트보다 작아질 수 있게 허용 */
-            width: auto !important;
-        }
-
-        div.stButton > button {
-            width: 100% !important; /* 컬럼 안을 꽉 채움 */
-            max-width: none !important;
-            height: 60px !important;
-            font-size: 14px !important; /* 글자 크기 축소하여 버튼 안착 */
             margin: 0 !important;
-            padding: 0 2px !important;
-            white-space: nowrap !important; /* 글자 줄바꿈 방지 */
-            overflow: hidden; /* 혹시 모를 넘침 방지 */
-            text-overflow: ellipsis; /* 글자가 너무 길면 ... 처리 */
-        }
-
-        /* 2. 결과 화면 상세 점수: 2행 2열(2x2) 배치 */
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
+            padding: 0 !important;
+            font-size: 14px !important;
+            height: 60px !important;
             display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important; /* 여기서 줄바꿈 허용으로 2x2 구현 */
-            width: 100% !important;
-            gap: 8px !important;
+            justify-content: center !important;
+            align-items: center !important;
         }
 
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div[data-testid="column"] {
-            flex: 1 1 calc(50% - 10px) !important; /* 50% 너비 확보 */
-            width: calc(50% - 10px) !important;
-            min-width: 120px !important;
-            margin-bottom: 5px;
-        }
-
-        /* Metric 상자 디자인 */
+        /* [3. 결과 화면 지표 2x2] */
         [data-testid="stMetricSimple"] {
             background: white !important;
             border: 1px solid #eee !important;
             border-radius: 15px !important;
             padding: 10px 0 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
+            width: 100% !important;
         }
     }
     </style>
