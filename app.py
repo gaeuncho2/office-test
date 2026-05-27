@@ -103,12 +103,7 @@ st.markdown("""
             max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
             height: 60px;
             font-size: 17px !important;
-        }
-
-        /* 결과창 지표(Metric)도 모바일에서 2열로 정렬 */
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
-            width: 48% !important;
-            min-width: 140px !important;
+            margin-bottom:10px;
         }
     }
     </style>
