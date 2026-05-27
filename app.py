@@ -130,7 +130,7 @@ else:
     st.write("---")
     res_col1, res_col2 = st.columns(2)
     with res_col1:
-        st.button("문의하기", key="final_contact", use_container_width=True)
+        st.button("전문가에게 컨설팅 문의하기", key="final_contact", use_container_width=True)
     with res_col2:
         if st.button("다시 하기", key="final_restart", use_container_width=True):
             st.session_state.step = 0
