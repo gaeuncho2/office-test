@@ -83,7 +83,33 @@ st.markdown("""
     div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
         display: flex !important; justify-content: space-between !important; width: 100% !important;
     }
+@media (max-width: 640px) {
+        /* 카드의 패딩을 줄여 공간 확보 */
+        .main-card { padding: 25px 15px; }
+        .question-text { font-size: 20px !important; }
 
+        /* 모바일에서는 컬럼을 세로로 꽉 차게 정렬 */
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
+            width: 100% !important; /* 버튼 감싸는 박스 너비 100% */
+        }
+
+        div.stButton > button {
+            width: 100% !important; /* 버튼이 모바일 너비에 꽉 차게 */
+            max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
+            height: 60px;
+            font-size: 17px !important;
+        }
+
+        /* 결과창 지표(Metric)도 모바일에서 2열로 정렬 */
+        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
+            width: 48% !important;
+            min-width: 140px !important;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
