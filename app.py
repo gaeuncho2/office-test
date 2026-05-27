@@ -83,28 +83,31 @@ st.markdown("""
     div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
         display: flex !important; justify-content: space-between !important; width: 100% !important;
     }
-   @media (max-width: 640px) {
-        /* 카드의 패딩을 줄여 공간 확보 */
-        .main-card { padding: 25px 15px; }
-        .question-text { font-size: 20px !important; }
+   /* 수정된 모바일 반응형 코드 */
+@media (max-width: 768px) {
+    /* 1. 상위 부모: 가로 배치 강제 및 줄바꿈 방지 */
+    div[data-testid="stHorizontalBlock"]:has(div.stButton) {
+        display: flex !important;
+        flex-direction: row !important; /* 무조건 가로로 나열 */
+        flex-wrap: nowrap !important;   /* 절대로 아래로 떨어지지 마라 */
+        gap: 10px !important;
+    }
 
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            flex-direction: row !important;
-            align-items: center !important;
-        }
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-            width: 45% !important; /* 버튼 감싸는 박스 너비 100% */
-            display:flex;
-            justify-content: stretch !important;
-            align-items: center !important;
-        }
-        div.stButton > button {
-            width:100%;
-            max-width: 320px; /* 너무 뚱뚱해지지 않게 제한 */
-            height: 60px;
-            font-size: 17px !important;
-            margin:30px;
-        }
+    /* 2. 컬럼 박스: 너비를 50%로 제한 (핵심) */
+    div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
+        width: 48% !important; /* 100%에서 48%로 수정 (가로 배치의 핵심) */
+        flex: 1 1 0% !important;
+        display: flex !important;
+    }
+
+    /* 3. 버튼: 50%짜리 부모 박스를 꽉 채우기 */
+    div.stButton > button {
+        width: 100% !important; /* 부모인 48% 박스 안을 꽉 채움 */
+        height: 60px;
+        font-size: 15px !important; /* 모바일에서 글자 안 잘리게 약간 축소 */
+        margin-bottom: 10px !important; /* 아래쪽 간격 적절히 조절 */
+    }
+}
     }
     </style>
     """, unsafe_allow_html=True)
