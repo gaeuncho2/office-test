@@ -83,49 +83,48 @@ st.markdown("""
     div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
         display: flex !important; justify-content: space-between !important; width: 100% !important;
     }
+    /* ★★★ 모바일 레이아웃 종결 (이것만 교체하세요) ★★★ */
     @media (max-width: 768px) {
-        .main-card { padding: 25px 15px; }
-        .question-text { font-size: 20px !important; }
+        /* 질문 텍스트 최적화 */
+        .question-text { font-size: 20px !important; line-height: 1.3 !important; }
 
-        /* 1. 버튼 가로 배치 강제 */
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) {
-            flex-direction: row !important; /* 세로가 아닌 가로로 설정 */
+        /* 1. 버튼 가로 정렬 강제 (Streamlit의 100% 너비 강제 해제) */
+        /* 선택자를 극도로 구체화하여 Streamlit 자체 캐시 설정을 덮어씁니다. */
+        div[data-testid="stAppViewContainer"] div[data-testid="stHorizontalBlock"] {
             display: flex !important;
-            justify-content: center !important;
-            gap: 10px !important;
+            flex-direction: row !important; /* 무조건 가로 */
+            flex-wrap: wrap !important;    /* 2x2 허용 */
             width: 100% !important;
+            gap: 10px !important;
         }
 
-        /* 버튼 컬럼들이 반반씩 차지하도록 */
-        div[data-testid="stHorizontalBlock"]:has(div.stButton) > div {
-            width: 50% !important;
-            flex: 1 1 auto !important;
+        /* 버튼 및 지표를 감싸는 컬럼의 너비를 50% 미만으로 박제 */
+        div[data-testid="stAppViewContainer"] div[data-testid="column"] {
+            width: calc(50% - 10px) !important; 
+            flex: 1 1 calc(50% - 10px) !important;
+            min-width: calc(50% - 10px) !important; /* 세로로 늘어나는 것 방지 */
+            max-width: calc(50% - 5px) !important;
         }
 
+        /* 버튼 스타일 보정 */
         div.stButton > button {
             width: 100% !important;
-            height: 60px;
-            font-size: 15px !important; /* 글자 크기를 살짝 줄여야 안 깨짐 */
+            height: 60px !important;
+            font-size: 14px !important;
             margin: 0 !important;
+            padding: 0 5px !important;
         }
 
-        /* 2. 상세 지표(Metric) 2x2 배치 강제 */
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) {
+        /* 2. 결과창 지표(Metric) 2x2 디자인 보정 */
+        [data-testid="stMetricSimple"] {
+            background: white !important;
+            border: 1px solid #eee !important;
+            border-radius: 15px !important;
+            padding: 10px 0 !important;
             display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important; /* 2개 쓰고 줄바꿈 */
-            gap: 10px !important;
+            flex-direction: column !important;
+            align-items: center !important;
         }
-
-        div[data-testid="stHorizontalBlock"]:has(div[data-testid="stMetricSimple"]) > div {
-            flex: 1 1 calc(50% - 10px) !important; /* 50% 너비 */
-            width: calc(50% - 10px) !important;
-            min-width: 120px !important;
-        }
-        
-        /* 사라졌던 문의하기 버튼이 보일 수 있게 여백 확보 */
-        div.stButton { margin-bottom: 10px; }
-    }
     }
     </style>
     """, unsafe_allow_html=True)
